@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@turbo/gen':
+        specifier: ^1.12.4
+        version: 1.13.4(@types/node@20.16.10)(typescript@5.6.2)
       prettier:
         specifier: ^3.2.5
         version: 3.3.3
@@ -126,6 +129,40 @@ importers:
         version: 4.1.4(@typescript-eslint/eslint-plugin@7.18.0)(eslint@8.57.1)
       typescript:
         specifier: ^5.3.3
+        version: 5.6.2
+
+  packages/template:
+    dependencies:
+      react:
+        specifier: ^18
+        version: 18.3.1
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@turbo/gen':
+        specifier: ^1.12.4
+        version: 1.13.4(@types/node@20.16.10)(typescript@5.6.2)
+      '@types/eslint':
+        specifier: ^8.56.5
+        version: 8.56.12
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.16.10
+      '@types/react':
+        specifier: ^18.2.61
+        version: 18.3.11
+      '@types/react-dom':
+        specifier: ^18.2.19
+        version: 18.3.0
+      eslint:
+        specifier: ^8
+        version: 8.57.1
+      typescript:
+        specifier: ^5
         version: 5.6.2
 
   packages/typescript-config: {}
