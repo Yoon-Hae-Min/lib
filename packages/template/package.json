@@ -1,13 +1,32 @@
 {
   "name": "@repo/template",
   "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yoon-Hae-Min/lib",
+    "directory": ""
+  },
   "private": true,
   "license": "MIT",
-  "exports": {
-    "./button": "./src/button.tsx"
-  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "tsc": "tsc",
+    "build": "tsc && rollup --config && rm -rf ./types"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "require": "./dist/bundle.js",
+        "import": "./dist/bundle.mjs",
+        "types": "./dist/index.d.ts"
+      }
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.25.7",
