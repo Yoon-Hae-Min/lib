@@ -6,7 +6,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "gen package": "turbo gen workspace --copy @repo/template --destination packages --type package"
+    "gen-package": "turbo gen workspace --copy @repo/template --destination packages --type package"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
@@ -18,5 +18,4 @@
   "engines": {
     "node": ">=18"
   }
-
 }
