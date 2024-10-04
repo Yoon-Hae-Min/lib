@@ -5,6 +5,7 @@
     "build": "turbo build --filter=!@repo/template",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "test": "turbo test --filter=!@repo/template",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "gen-package": "turbo gen workspace --copy @repo/template --destination packages --type package"
   },
