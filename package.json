@@ -2,7 +2,7 @@
   "name": "haemin-lib",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo build --filter=!@repo/template",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
