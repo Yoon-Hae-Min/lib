@@ -8,7 +8,7 @@
     "url": "https://github.com/Yoon-Hae-Min/lib",
     "directory": ""
   },
-  "private": true,
+  "private": false,
   "license": "MIT",
   "files": [
     "dist"
