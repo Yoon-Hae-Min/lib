@@ -1,5 +1,5 @@
 {
-  "name": "@repo/template",
+  "name": "@yoonhaemin-lib/template",
   "version": "0.0.1",
   "description": "",
   "keywords": [],
@@ -52,7 +52,7 @@
     "rollup-plugin-dts": "^6.1.1",
     "typescript": "^5"
   },
-  "dependencies": {
+  "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
   }
