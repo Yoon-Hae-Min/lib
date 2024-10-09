@@ -2,13 +2,13 @@
   "name": "yoonhaemin-lib",
   "private": true,
   "scripts": {
-    "build": "turbo build --filter=!@repo/template",
+    "build": "turbo build --filter=!@yoonhaemin-lib/template",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "test": "turbo test --filter=!@repo/template",
+    "test": "turbo test --filter=!@yoonhaemin-lib/template",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ci:publish": "changeset publish",
-    "gen-package": "turbo gen workspace --copy @repo/template --destination packages --type package"
+    "gen-package": "turbo gen workspace --copy @yoonhaemin-lib/template --destination packages --type package"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",

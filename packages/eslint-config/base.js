@@ -9,7 +9,6 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
     "prettier",
-    "turbo",
   ],
   plugins: ["@typescript-eslint", "unused-imports"],
   globals: {
