@@ -1,7 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import React, { createContext, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { isArrEmpty } from "./utils";
+import { isArrEmpty } from './utils';
 
 interface ModalElement {
   id: string;
@@ -31,16 +31,16 @@ const ModalProvider = ({ children, Overlay }: ModalProvider) => {
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && modalElements.length > 0) {
+      if (event.key === 'Escape' && modalElements.length > 0) {
         popModal();
-        if (isArrEmpty(modalElements)) document.body.style.overflow = "unset";
+        if (isArrEmpty(modalElements)) document.body.style.overflow = 'unset';
       }
     };
 
-    document.addEventListener("keydown", handleEscKey);
+    document.addEventListener('keydown', handleEscKey);
 
     return () => {
-      document.removeEventListener("keydown", handleEscKey);
+      document.removeEventListener('keydown', handleEscKey);
     };
   }, [modalElements]);
 
@@ -59,7 +59,7 @@ const ModalProvider = ({ children, Overlay }: ModalProvider) => {
               return <Component key={id} component={element} />;
             })}
           </div>,
-          document.body
+          document.body,
         )}
       </ModalContext.Provider>
     </>
