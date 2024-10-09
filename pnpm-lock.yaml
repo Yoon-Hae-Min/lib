@@ -68,12 +68,6 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.25.7
         version: 7.25.7(@babel/core@7.25.7)
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.25.7)(rollup@4.24.0)
@@ -110,6 +104,12 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.3.0
+      '@yoonhaemin-lib/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@yoonhaemin-lib/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.25.7)
@@ -157,12 +157,6 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.25.7
         version: 7.25.7(@babel/core@7.25.7)
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.25.7)(rollup@4.24.0)
@@ -199,6 +193,12 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.3.0
+      '@yoonhaemin-lib/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@yoonhaemin-lib/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       babel-jest:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.25.7)
