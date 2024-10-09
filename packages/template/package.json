@@ -8,7 +8,7 @@
     "url": "https://github.com/Yoon-Hae-Min/lib",
     "directory": ""
   },
-  "private": true,
+  "private": false,
   "license": "MIT",
   "files": [
     "dist"
@@ -18,6 +18,9 @@
     "tsc": "tsc",
     "test": "jest",
     "build": "tsc && rollup --config && rm -rf ./types"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "main": "./dist/bundle.js",
   "module": "./dist/bundle.mjs",
