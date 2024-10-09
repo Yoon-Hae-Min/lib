@@ -2,11 +2,7 @@
   "name": "@yoonhaemin-lib/eslint-config",
   "version": "0.0.0",
   "private": false,
-  "files": [
-    "library.js",
-    "next.js",
-    "react-internal.js"
-  ],
+  "main": "index.js",
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
