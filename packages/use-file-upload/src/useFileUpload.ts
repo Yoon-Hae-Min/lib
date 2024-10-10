@@ -82,6 +82,7 @@ const useFileUpload = ({
     }
 
     setFiles(validFiles);
+    setIsError(false);
     onChange && onChange(validFiles);
   };
 
