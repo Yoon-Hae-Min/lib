@@ -1,5 +1,5 @@
 {
-  "name": "@yoonhaemin-lib/template",
+  "name": "@yoonhaemin-lib/use-file-upload",
   "version": "0.0.1",
   "description": "",
   "keywords": [],
@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "tsc": "tsc",
     "test": "jest",
     "build": "pnpm lint && pnpm test && tsc && rollup --config && rm -rf ./types"
