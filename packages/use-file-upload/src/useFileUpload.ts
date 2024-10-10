@@ -8,6 +8,7 @@ interface FileUploadProps {
   limitNameLength?: number;
   onChange?: (files: File[]) => void;
   initialFiles?: File[];
+  customValidations?: ((file: File) => boolean)[];
 }
 
 /**
@@ -17,6 +18,8 @@ interface FileUploadProps {
  * @param maxFileCount - 허용할 파일 갯수
  * @param limitNameLength - 파일 이름 길이 제한
  * @param onChange - 파일 변경 시 호출할 콜백
+ * @param initialFiles - 초기 파일 목록
+ * @param customValidations - 커스텀 검증 함수
  *
  * @returns files - 업로드된 파일 목록
  * @returns fileInputProps - input에 바인딩
@@ -30,6 +33,7 @@ const useFileUpload = ({
   limitNameLength,
   onChange,
   initialFiles,
+  customValidations,
 }: FileUploadProps) => {
   const [files, setFiles] = useState<File[] | null | undefined>(initialFiles);
   const [isError, setIsError] = useState(false);
@@ -64,7 +68,12 @@ const useFileUpload = ({
 
     const validFiles: File[] = [];
     for (const file of selectedFiles) {
-      if (validateFileType(file.type) && validateFileSize(file.size) && validateFileNameLength(file.name)) {
+      const isDefaultValid =
+        validateFileType(file.type) && validateFileSize(file.size) && validateFileNameLength(file.name);
+
+      const isCustomValid = customValidations?.every((validate) => validate(file));
+
+      if (isDefaultValid && isCustomValid) {
         validFiles.push(file);
       } else {
         setIsError(true);
