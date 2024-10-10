@@ -74,4 +74,40 @@ describe('useFileUpload', () => {
     expect(result.current.files).toBeUndefined();
     expect(result.current.isError).toBe(true);
   });
+
+  it('커스텀 검증을 추가할 수 있다.', () => {
+    const customValidation = (file: File) => {
+      return file.name === 'valid-file.png';
+    };
+
+    const { result } = renderHook(() =>
+      useFileUpload({
+        types: ['image/png', 'image/jpeg'],
+        size: 5,
+        maxFileCount: 1,
+        customValidations: [customValidation],
+      }),
+    );
+
+    const invalidFile = createFile('invalid-file.png', 2 * 1024 * 1024, 'image/png'); // 'valid'를 포함하지 않는 파일
+    const validFile = createFile('valid-file.png', 2 * 1024 * 1024, 'image/png'); // 'valid'를 포함하는 파일
+
+    act(() => {
+      result.current.fileInputProps.onChange({
+        target: { files: [invalidFile] },
+      } as any);
+    });
+
+    expect(result.current.files).toBeUndefined();
+    expect(result.current.isError).toBe(true);
+
+    act(() => {
+      result.current.fileInputProps.onChange({
+        target: { files: [validFile] },
+      } as any);
+    });
+
+    expect(result.current.files?.length).toBe(1);
+    expect(result.current.isError).toBe(false);
+  });
 });
