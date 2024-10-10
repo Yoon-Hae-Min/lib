@@ -1,6 +1,3 @@
-const test = () => {
-  const a = 0;
-  console.log(a);
-};
-
-export default test;
+export { default as ViewTracker } from './ViewTracker';
+export { default as ViewTrackerProvider } from './ViewTrackerProvider';
+export { default as useViewTracker } from './useViewTracker';
