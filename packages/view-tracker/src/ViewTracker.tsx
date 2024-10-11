@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
-import { IntersectionOptions, useInView } from 'react-intersection-observer';
+import type { IntersectionOptions } from 'react-intersection-observer';
+import { useInView } from 'react-intersection-observer';
+
 import useViewTracker from './useViewTracker';
 
 interface BoundaryInViewProps {
   children: React.ReactNode;
   id: string;
-  top: IntersectionOptions;
-  bottom: IntersectionOptions;
+  top?: IntersectionOptions;
+  bottom?: IntersectionOptions;
 }
 
 const ViewTracker = ({ children, id, top, bottom }: BoundaryInViewProps) => {
@@ -20,7 +22,7 @@ const ViewTracker = ({ children, id, top, bottom }: BoundaryInViewProps) => {
     if (isTopInView) {
       setViewSection(id);
     }
-  }, [id, , isTopInView, setViewSection]);
+  }, [id, isTopInView, setViewSection]);
 
   useEffect(() => {
     if (isBottomInView) {
@@ -33,7 +35,6 @@ const ViewTracker = ({ children, id, top, bottom }: BoundaryInViewProps) => {
       id={id}
       style={{
         position: 'relative',
-        scrollMarginTop: '7rem',
       }}
       ref={topRef}
     >

@@ -1,4 +1,5 @@
-import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
+import type { PropsWithChildren} from 'react';
+import React, { createContext, useState } from 'react';
 
 export interface ViewTrackerContextType {
   viewSection: string;
