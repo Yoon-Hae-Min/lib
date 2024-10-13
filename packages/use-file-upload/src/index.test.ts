@@ -5,11 +5,26 @@ import useFileUpload from './useFileUpload';
 
 describe('useFileUpload', () => {
   it('빈 파일을 초기화 할 수 있다.', () => {
+    const file = createFile('test.png', 5 * 1024 * 1024, 'image/png');
+
+    const { result } = renderHook(() => useFileUpload({ size: 5, maxFileCount: 1 }));
+
+    act(() => {
+      result.current.fileInputProps.onChange({
+        target: { files: [file] },
+      } as any);
+    });
+
+    expect(result.current.files).toStrictEqual([file]);
+    expect(Object.values(result.current.isError).every((v) => v)).toBe(false);
+  });
+
+  it('특정 파일 타입을 지정할 수 있다.', () => {
     const { result } = renderHook(() =>
       useFileUpload({ types: ['image/png', 'image/jpeg'], size: 5, maxFileCount: 1 }),
     );
     expect(result.current.files).toBeUndefined();
-    expect(result.current.isError).toBe(false);
+    expect(Object.values(result.current.isError).every((v) => v)).toBe(false);
   });
 
   it('파일을 초기화 할 수 있다.', () => {
@@ -20,7 +35,7 @@ describe('useFileUpload', () => {
 
     expect(result.current.files).toHaveLength(1);
     expect(result.current.files).toStrictEqual([file]);
-    expect(result.current.isError).toBe(false);
+    expect(Object.values(result.current.isError).every((v) => v)).toBe(false);
   });
 
   it('지정하지 않는 타입의 파일은 업로드 할 수 없다.', () => {
@@ -37,7 +52,7 @@ describe('useFileUpload', () => {
     });
 
     expect(result.current.files).toBeUndefined();
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isError.type).toBe(true);
   });
 
   it('지정한 파일 개수보다 많은 파일은 업로드 할 수 없다.', () => {
@@ -55,7 +70,7 @@ describe('useFileUpload', () => {
     });
 
     expect(result.current.files).toBeUndefined();
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isError.count).toBe(true);
   });
 
   it('지정한 파일 용량보다 큰 파일은 업로드 할 수 없다.', () => {
@@ -72,12 +87,12 @@ describe('useFileUpload', () => {
     });
 
     expect(result.current.files).toBeUndefined();
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isError.size).toBe(true);
   });
 
   it('커스텀 검증을 추가할 수 있다.', () => {
     const customValidation = (file: File) => {
-      return file.name === 'valid-file.png';
+      return { validationError: file.name !== 'valid-file.png' };
     };
 
     const { result } = renderHook(() =>
@@ -99,7 +114,7 @@ describe('useFileUpload', () => {
     });
 
     expect(result.current.files).toBeUndefined();
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isError.validationError).toBe(true);
 
     act(() => {
       result.current.fileInputProps.onChange({
@@ -107,7 +122,7 @@ describe('useFileUpload', () => {
       } as any);
     });
 
-    expect(result.current.files?.length).toBe(1);
-    expect(result.current.isError).toBe(false);
+    expect(result.current.files).toStrictEqual([validFile]);
+    expect(result.current.isError.validationError).toBe(false);
   });
 });

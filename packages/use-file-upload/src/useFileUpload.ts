@@ -1,14 +1,23 @@
 import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
 
-interface FileUploadProps {
-  types: string[];
+type FilesState = File[] | null | undefined;
+
+export type FileErrorType = {
+  size: boolean;
+  count: boolean;
+  type: boolean;
+  nameLength: boolean;
+};
+
+interface FileUploadProps<T extends Record<string, boolean>> {
+  types?: string[];
   size?: number;
   maxFileCount?: number;
   limitNameLength?: number;
   onChange?: (files: File[]) => void;
   initialFiles?: File[];
-  customValidations?: ((file: File) => boolean)[];
+  customValidations?: ((file: File) => T)[];
 }
 
 /**
@@ -26,7 +35,7 @@ interface FileUploadProps {
  * @returns inputFor - input을 대체할 엘리먼트에 바인딩
  *
  */
-const useFileUpload = ({
+const useFileUpload = <T extends Record<string, boolean>>({
   types,
   size = 10,
   maxFileCount = 1,
@@ -34,56 +43,62 @@ const useFileUpload = ({
   onChange,
   initialFiles,
   customValidations,
-}: FileUploadProps) => {
-  const [files, setFiles] = useState<File[] | null | undefined>(initialFiles);
-  const [isError, setIsError] = useState(false);
+}: FileUploadProps<T>) => {
+  const [files, setFiles] = useState<FilesState>(initialFiles);
+  const [isError, setIsError] = useState<FileErrorType & T>({
+    size: false,
+    count: false,
+    type: false,
+    nameLength: false,
+  } as FileErrorType & T);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const maxFileSize = size * 1024 * 1024;
 
-  const validateFileType = (type: string) => {
-    return types.includes(type);
+  const setError = (errorKey: string, condition: boolean) => {
+    setIsError((pre) => ({ ...pre, [errorKey]: condition }));
+    return condition;
   };
 
-  const validateFileSize = (size: number) => {
-    return size <= maxFileSize;
+  const validateFileType = (type: string) => !setError('type', !(types && types.length > 0 && types.includes(type)));
+
+  const validateFileSize = (fileSize: number) => !setError('size', fileSize > maxFileSize);
+
+  const validateFileCount = (count: number) => !setError('count', count > maxFileCount);
+
+  const validateFileNameLength = (name: string) =>
+    !setError('nameLength', !!limitNameLength && name.length > limitNameLength);
+
+  const validateCustom = (file: File) => {
+    return customValidations?.every((validate) => {
+      const validationResult = validate(file);
+      return Object.entries(validationResult).every(([key, value]) => {
+        return !setError(key, value);
+      });
+    });
   };
 
-  const validateFileCount = (count: number) => {
-    return count <= maxFileCount;
-  };
+  const validateFiles = (file: File) => {
+    const isTypeValid = types ? validateFileType(file.type): true;
+    const isSizeValid = size ? validateFileSize(file.size): true;
+    const isNameValid = limitNameLength ? validateFileNameLength(file.name): true;
+    const isCustomValid = customValidations ? validateCustom(file): true;
 
-  const validateFileNameLength = (name: string) => {
-    return !limitNameLength || name.length <= limitNameLength;
+    return isTypeValid && isSizeValid && isNameValid && isCustomValid;
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    if (!selectedFiles) return;
+    if (!selectedFiles || !validateFileCount(selectedFiles.length)) return;
 
-    if (!validateFileCount(selectedFiles.length)) {
-      setIsError(true);
-      return;
+    const filesArray = Array.from(selectedFiles);
+
+    const isValid = filesArray.every((file) => validateFiles(file));
+    if (isValid) {
+      setFiles(filesArray);
+      onChange && onChange(filesArray);
     }
-
-    const validFiles: File[] = [];
-    for (const file of selectedFiles) {
-      const isDefaultValid =
-        validateFileType(file.type) && validateFileSize(file.size) && validateFileNameLength(file.name);
-
-      const isCustomValid = customValidations?.every((validate) => validate(file));
-
-      if (isDefaultValid && isCustomValid) {
-        validFiles.push(file);
-      } else {
-        setIsError(true);
-        return;
-      }
-    }
-
-    setFiles(validFiles);
-    setIsError(false);
-    onChange && onChange(validFiles);
   };
 
   const removeFile = (index: number) => {
@@ -101,7 +116,7 @@ const useFileUpload = ({
     files,
     fileInputProps: {
       onChange: handleFileChange,
-      accept: types.join(','),
+      accept: types?.join(','),
       multiple: maxFileCount > 1,
       ref: fileInputRef,
     },
