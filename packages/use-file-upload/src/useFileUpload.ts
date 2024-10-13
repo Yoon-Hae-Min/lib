@@ -1,6 +1,15 @@
 import type { ChangeEvent } from 'react';
 import { useRef, useState } from 'react';
 
+type FilesState = File[] | null | undefined;
+
+export type FileErrorType = {
+  size: boolean;
+  count: boolean;
+  type: boolean;
+  nameLength: boolean;
+  [key: string]: boolean;
+};
 interface FileUploadProps {
   types: string[];
   size?: number;
@@ -8,7 +17,7 @@ interface FileUploadProps {
   limitNameLength?: number;
   onChange?: (files: File[]) => void;
   initialFiles?: File[];
-  customValidations?: ((file: File) => boolean)[];
+  customValidations?: ((file: File) => { [key: string]: boolean })[];
 }
 
 /**
@@ -35,55 +44,59 @@ const useFileUpload = ({
   initialFiles,
   customValidations,
 }: FileUploadProps) => {
-  const [files, setFiles] = useState<File[] | null | undefined>(initialFiles);
-  const [isError, setIsError] = useState(false);
+  const [files, setFiles] = useState<FilesState>(initialFiles);
+  const [isError, setIsError] = useState<FileErrorType>({
+    size: false,
+    count: false,
+    type: false,
+    nameLength: false,
+  });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const maxFileSize = size * 1024 * 1024;
 
-  const validateFileType = (type: string) => {
-    return types.includes(type);
+  const setError = (errorKey: string, condition: boolean) => {
+    setIsError((pre) => ({ ...pre, [errorKey]: condition }));
+    return condition;
   };
 
-  const validateFileSize = (size: number) => {
-    return size <= maxFileSize;
+  const validateFileType = (type: string) => !setError('type', !types.includes(type));
+
+  const validateFileSize = (fileSize: number) => !setError('size', fileSize > maxFileSize);
+
+  const validateFileCount = (count: number) => !setError('count', count > maxFileCount);
+
+  const validateFileNameLength = (name: string) =>
+    !setError('nameLength', !!limitNameLength && name.length > limitNameLength);
+
+  const validateCustom = (file: File) => {
+    return customValidations?.every((validate) => {
+      return Object.entries(validate(file)).every(([key, value]) => {
+        return !setError(key, value);
+      });
+    });
   };
 
-  const validateFileCount = (count: number) => {
-    return count <= maxFileCount;
-  };
-
-  const validateFileNameLength = (name: string) => {
-    return !limitNameLength || name.length <= limitNameLength;
+  const validateFiles = (file: File) => {
+    return (
+      validateFileType(file.type) &&
+      validateFileSize(file.size) &&
+      validateFileNameLength(file.name) &&
+      validateCustom(file)
+    );
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    if (!selectedFiles) return;
+    if (!selectedFiles || !validateFileCount(selectedFiles.length)) return;
 
-    if (!validateFileCount(selectedFiles.length)) {
-      setIsError(true);
-      return;
+    const filesArray = Array.from(selectedFiles);
+
+    const isValid = filesArray.every((file) => validateFiles(file));
+    if (isValid) {
+      setFiles(filesArray);
+      onChange && onChange(filesArray);
     }
-
-    const validFiles: File[] = [];
-    for (const file of selectedFiles) {
-      const isDefaultValid =
-        validateFileType(file.type) && validateFileSize(file.size) && validateFileNameLength(file.name);
-
-      const isCustomValid = customValidations?.every((validate) => validate(file));
-
-      if (isDefaultValid && isCustomValid) {
-        validFiles.push(file);
-      } else {
-        setIsError(true);
-        return;
-      }
-    }
-
-    setFiles(validFiles);
-    setIsError(false);
-    onChange && onChange(validFiles);
   };
 
   const removeFile = (index: number) => {
