@@ -11,7 +11,7 @@ export type FileErrorType = {
 };
 
 interface FileUploadProps<T extends Record<string, boolean>> {
-  types: string[];
+  types?: string[];
   size?: number;
   maxFileCount?: number;
   limitNameLength?: number;
@@ -61,7 +61,7 @@ const useFileUpload = <T extends Record<string, boolean>>({
     return condition;
   };
 
-  const validateFileType = (type: string) => !setError('type', !types.includes(type));
+  const validateFileType = (type: string) => !setError('type', !(types && types.length > 0 && types.includes(type)));
 
   const validateFileSize = (fileSize: number) => !setError('size', fileSize > maxFileSize);
 
@@ -80,12 +80,12 @@ const useFileUpload = <T extends Record<string, boolean>>({
   };
 
   const validateFiles = (file: File) => {
-    return (
-      validateFileType(file.type) &&
-      validateFileSize(file.size) &&
-      validateFileNameLength(file.name) &&
-      validateCustom(file)
-    );
+    const isTypeValid = types ? validateFileType(file.type): true;
+    const isSizeValid = size ? validateFileSize(file.size): true;
+    const isNameValid = limitNameLength ? validateFileNameLength(file.name): true;
+    const isCustomValid = customValidations ? validateCustom(file): true;
+
+    return isTypeValid && isSizeValid && isNameValid && isCustomValid;
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +116,7 @@ const useFileUpload = <T extends Record<string, boolean>>({
     files,
     fileInputProps: {
       onChange: handleFileChange,
-      accept: types.join(','),
+      accept: types?.join(','),
       multiple: maxFileCount > 1,
       ref: fileInputRef,
     },
