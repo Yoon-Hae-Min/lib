@@ -8,16 +8,16 @@ export type FileErrorType = {
   count: boolean;
   type: boolean;
   nameLength: boolean;
-  [key: string]: boolean;
 };
-interface FileUploadProps {
+
+interface FileUploadProps<T extends Record<string, boolean>> {
   types: string[];
   size?: number;
   maxFileCount?: number;
   limitNameLength?: number;
   onChange?: (files: File[]) => void;
   initialFiles?: File[];
-  customValidations?: ((file: File) => { [key: string]: boolean })[];
+  customValidations?: ((file: File) => T)[];
 }
 
 /**
@@ -35,7 +35,7 @@ interface FileUploadProps {
  * @returns inputFor - input을 대체할 엘리먼트에 바인딩
  *
  */
-const useFileUpload = ({
+const useFileUpload = <T extends Record<string, boolean>>({
   types,
   size = 10,
   maxFileCount = 1,
@@ -43,14 +43,15 @@ const useFileUpload = ({
   onChange,
   initialFiles,
   customValidations,
-}: FileUploadProps) => {
+}: FileUploadProps<T>) => {
   const [files, setFiles] = useState<FilesState>(initialFiles);
-  const [isError, setIsError] = useState<FileErrorType>({
+  const [isError, setIsError] = useState<FileErrorType & T>({
     size: false,
     count: false,
     type: false,
     nameLength: false,
-  });
+  } as FileErrorType & T);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const maxFileSize = size * 1024 * 1024;
@@ -71,7 +72,8 @@ const useFileUpload = ({
 
   const validateCustom = (file: File) => {
     return customValidations?.every((validate) => {
-      return Object.entries(validate(file)).every(([key, value]) => {
+      const validationResult = validate(file);
+      return Object.entries(validationResult).every(([key, value]) => {
         return !setError(key, value);
       });
     });
