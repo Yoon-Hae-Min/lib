@@ -5,6 +5,21 @@ import useFileUpload from './useFileUpload';
 
 describe('useFileUpload', () => {
   it('빈 파일을 초기화 할 수 있다.', () => {
+    const file = createFile('test.png', 5 * 1024 * 1024, 'image/png');
+
+    const { result } = renderHook(() => useFileUpload({ size: 5, maxFileCount: 1 }));
+
+    act(() => {
+      result.current.fileInputProps.onChange({
+        target: { files: [file] },
+      } as any);
+    });
+
+    expect(result.current.files).toStrictEqual([file]);
+    expect(Object.values(result.current.isError).every((v) => v)).toBe(false);
+  });
+
+  it('특정 파일 타입을 지정할 수 있다.', () => {
     const { result } = renderHook(() =>
       useFileUpload({ types: ['image/png', 'image/jpeg'], size: 5, maxFileCount: 1 }),
     );
