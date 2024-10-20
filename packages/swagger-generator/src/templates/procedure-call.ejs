@@ -1,0 +1,146 @@
+<%
+const { utils, route, config,modelTypes } = it;
+const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
+const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
+const { parameters, path, method, payload, query, formData, security, requestParams,...args } = route.request;
+const { type, errorType, contentTypes } = route.response;
+const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
+const routeDocs = includeFile("@base/route-docs", { config, route, utils });
+const queryName = (query && query.name) || "query";
+const pathParams = _.values(parameters);
+const pathParamsNames = _.map(pathParams, "name");
+const dataContracts = _.map(modelTypes, "name");
+
+const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
+
+const requestConfigParam = {
+    name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
+    optional: true,
+    type: "RequestParams",
+    defaultValue: "{}",
+}
+
+const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
+
+const rawWrapperArgs = config.extractRequestParams ?
+    _.compact([
+        requestParams && {
+          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
+          optional: false,
+          type: getInlineParseContent(requestParams),
+        },
+        ...(!requestParams ? pathParams : []),
+        payload,
+        requestConfigParam,
+    ]) :
+    _.compact([
+        ...pathParams,
+        query,
+        payload,
+        requestConfigParam,
+    ])
+
+const wrapperArgs = _
+    // Sort by optionality
+    .sortBy(rawWrapperArgs, [o => o.optional])
+    .map(argToTmpl)
+    .join(', ')
+
+// RequestParams["type"]
+const requestContentKind = {
+    "JSON": "ContentType.Json",
+    "URL_ENCODED": "ContentType.UrlEncoded",
+    "FORM_DATA": "ContentType.FormData",
+    "TEXT": "ContentType.Text",
+}
+// RequestParams["format"]
+const responseContentKind = {
+    "JSON": '"json"',
+    "IMAGE": '"blob"',
+    "FORM_DATA": isFetchTemplate ? '"formData"' : '"document"'
+}
+
+const bodyTmpl = _.get(payload, "name") || null;
+const queryTmpl = (query != null && queryName) || null;
+const bodyContentKindTmpl = requestContentKind[requestBodyInfo.contentKind] || null;
+const responseFormatTmpl = responseContentKind[responseBodyInfo.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind] || null;
+const securityTmpl = security ? 'true' : null;
+
+const describeReturnType = () => {
+    if (!config.toJS) return "";
+
+    switch(config.httpClientType) {
+        case HTTP_CLIENT.AXIOS: {
+          return `Promise<AxiosResponse<${type}>>`
+        }
+        default: {
+          return `Promise<HttpResponse<${type}, ${errorType}>`
+        }
+    }
+}
+
+
+
+const TemplateLiteralRegex = /\$\{([^}]+)\}/g
+
+const toCamelCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
+  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 첫 단어 제외, 각 단어 첫 글자를 대문자로 변환
+  .replace(/^[A-Z]/, (firstLetter) => firstLetter.toLowerCase());  // 첫 번째 단어의 첫 글자는 소문자로 변환
+
+  const toPascalCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
+  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 각 단어의 첫 글자를 대문자로 변환
+  .replace(/^[a-z]/, (firstLetter) => firstLetter.toUpperCase());  // 첫 번째 단어의 첫 글자도 대문자로 변환
+
+const isGetMethod = (method) => method === "get";
+
+/**
+ * @description queryKey를 생성합니다.
+ * @example /api/posts/{postId} => ['api', 'posts', postId]
+ */
+const buildQueryKey = (path) => {
+  const pathArr = path.split("/");
+  return pathArr.filter(v=>v).map((v) => {
+    if(v.match(TemplateLiteralRegex)){
+      return v.replace(TemplateLiteralRegex, '$1');
+    }
+    else{
+      return `'${v}'`;
+    }
+  });
+}
+
+
+%>
+
+
+
+/**
+<%~ routeDocs.description %>
+
+*<% /* Here you can add some other JSDoc tags */ %>
+
+<%~ routeDocs.lines %>
+
+*/
+
+<%~ route.routeName.usage %>Key = (<%~ wrapperArgs %>) => [<%- ~buildQueryKey(path) %>,<% if (queryTmpl) { %>query<% } %>,<% if (requestParams) { %>params<% } %>]
+
+<%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
+<% if (payload) { %>
+<%= toCamelCase(payload.type+ "Schema") %>.parse(data);
+<% } %>
+const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
+  path: `<%~ path %>`,
+  method: '<%~ _.upperCase(method) %>',
+  <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
+  <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
+  <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
+  <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
+  <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
+  ...<%~ _.get(requestConfigParam, "name") %>,
+  })
+  <%= toCamelCase(type+ "Schema") %>.parse(response.data);
+
+
+  return response;
+  };
