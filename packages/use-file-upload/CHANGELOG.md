@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/use-file-upload
 
+## 1.1.1
+
+### Patch Changes
+
+- a12f364: add package file
+
 ## 1.1.0
 
 ### Minor Changes
