@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 1.0.2
+
+### Patch Changes
+
+- bf67193: fix: API generator 템플릿 재 배포
+
 ## 1.0.1
 
 ### Patch Changes
