@@ -1,6 +1,5 @@
 # useFileUpload
 
-
 파일 업로드를 도와주는 hook입니다. 실제 파일이 업로드 되는 input과 그 버튼을 대체할 input을 제공합니다.
 
 ### 예시 코드
