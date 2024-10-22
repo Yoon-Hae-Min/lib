@@ -4,6 +4,12 @@
 
 ### Major Changes
 
+- 26d2c9c: 패키지 배포
+
+## 1.0.0
+
+### Major Changes
+
 - 759b40d: feat: swagger-generator 배포
 
 ## 0.0.2
