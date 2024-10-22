@@ -40,6 +40,17 @@ const rawWrapperArgs = config.extractRequestParams ?
         requestConfigParam,
     ])
 
+const queryKeyProps = _.sortBy(_.compact([
+requestParams && {
+          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
+          optional: false,
+          type: getInlineParseContent(requestParams),
+        },
+        ...(!requestParams ? pathParams : []),
+]),[o => o.optional]).map(argToTmpl)
+.join(', ')
+
+
 const wrapperArgs = _
     // Sort by optionality
     .sortBy(rawWrapperArgs, [o => o.optional])
@@ -123,7 +134,9 @@ const buildQueryKey = (path) => {
 
 */
 
-<%~ route.routeName.usage %>Key = (<%~ wrapperArgs %>) => [<%- ~buildQueryKey(path) %>,<% if (queryTmpl) { %>query<% } %>,<% if (requestParams) { %>params<% } %>]
+<% if(isGetMethod(method)){%>
+<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~buildQueryKey(path) %>,<% if (queryTmpl) { %>query,<% } %>]
+<% } %>
 
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
 <% if (payload) { %>
