@@ -1,24 +1,33 @@
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 
-interface runZodProps{
-    input: string;
-    output: string;
+interface RunZodProps {
+  input: string;
+  output: string;
 }
 
-export const runZod = ({
-    input,
-    output
-}:runZodProps) => {
-  const command = `ts-to-zod ${input} ${output}`;
+export const runZod = ({ input, output }: RunZodProps) => {
+  const command = 'ts-to-zod';
+  const args = [`${input}/data-contracts.ts`, `${output}/schema.ts`];
 
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return;
+  const childProcess = spawn(command, args);
+
+  childProcess.stdout.on('data', (data) => {
+    console.log(`${data}`);
+  });
+
+  childProcess.stderr.on('data', (data) => {
+    console.log(`${data}`);
+  });
+
+  childProcess.on('close', (code) => {
+    if (code !== 0) {
+      console.error(`Command finished with code ${code}`);
+    } else {
+      console.log('Command finished successfully');
     }
-    if (stderr) {
-      console.error(`Stderr: ${stderr}`);
-      return;
-    }
+  });
+
+  childProcess.on('error', (error) => {
+    console.error(`Execution error: ${error}`);
   });
 };

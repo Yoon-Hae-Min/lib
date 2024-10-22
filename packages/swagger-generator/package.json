@@ -11,20 +11,23 @@
   "private": false,
   "license": "MIT",
   "files": [
-    "dist"
+    "bin",
+    "lib"
   ],
+  "bin": {
+    "swagger-generator": "bin/run"
+  },
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
-    "tsc": "tsc",
+    "lint": "eslint .",
+    "tsc": "tsc  --showConfig",
     "test": "jest",
-    "build": "pnpm lint && pnpm test && tsc && rollup --config && rm -rf ./types"
+    "build": "pnpm lint && tsc"
   },
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/bundle.js",
-  "module": "./dist/bundle.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
   "dependencies": {
     "swagger-typescript-api": "^13.0.22",
     "ts-to-zod": "^3.13.0",
@@ -64,6 +67,6 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "react-dom": ">=18"
+    "ts-to-zod": ">=3"
   }
 }

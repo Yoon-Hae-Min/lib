@@ -1,40 +1,45 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
+const yargs = require('yargs');
+const { hideBin } = require('yargs/helpers');
 
-import { runSwagger } from '../src/gen-swagger';
-import { runZod } from '../src/gen-zod';
+const { runZod } = require('../lib/index');
+const { runSwagger } = require('../lib/index');
 
-const argv = await yargs(hideBin(process.argv))
-  .option('id', {
-    describe: 'ID for Basic Auth',
-    type: 'string',
-    demandOption: false,
-  })
-  .option('password', {
-    describe: 'Password for Basic Auth',
-    type: 'string',
-    demandOption: false,
-  })
-  .option('url', {
-    describe: 'URL of the OpenAPI specification',
-    type: 'string',
-    demandOption: true,
-  })
-  .option('output', {
-    describe: 'Output directory for the generated API client',
-    type: 'string',
-    demandOption: true,
-  }).argv;
+async function main() {
+  const argv = await yargs(hideBin(process.argv))
+    .option('id', {
+      describe: 'ID for Basic Auth',
+      type: 'string',
+      demandOption: false,
+    })
+    .option('password', {
+      describe: 'Password for Basic Auth',
+      type: 'string',
+      demandOption: false,
+    })
+    .option('url', {
+      describe: 'URL of the OpenAPI specification',
+      type: 'string',
+      demandOption: true,
+    })
+    .option('output', {
+      describe: 'Output directory for the generated API client',
+      type: 'string',
+      demandOption: true,
+    }).argv;
 
-runSwagger({
-  id: argv.id,
-  password: argv.password,
-  url: argv.url,
-  output: argv.output,
-});
-runZod({
-  input: argv.output,
-  output: argv.output,
-});
+  await runSwagger({
+    id: argv.id,
+    password: argv.password,
+    url: argv.url,
+    output: argv.output,
+  });
+
+  runZod({
+    input: argv.output,
+    output: argv.output,
+  });
+}
+
+main();

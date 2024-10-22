@@ -4,21 +4,14 @@ import process from 'process';
 
 import { generateApi } from 'swagger-typescript-api';
 
-
 interface RunSwaggerOptions {
   id?: string;
   password?: string;
   output: string;
   url: string;
 }
-
-export const runSwagger = ({
-  id,
-  password,
-  output,
-  url,
-}:RunSwaggerOptions) => {
-  generateApi({
+export const runSwagger = async ({ id, password, output, url }: RunSwaggerOptions) => {
+  await generateApi({
     url: url,
     templates: path.resolve(process.cwd(), './templates'),
     output: path.resolve(process.cwd(), output),
