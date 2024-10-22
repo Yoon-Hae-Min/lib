@@ -1,6 +1,6 @@
 {
-  "name": "swagger-generator",
-  "version": "1.0.0",
+  "name": "@yoonhaemin/swagger-generator",
+  "version": "0.0.2",
   "description": "",
   "keywords": [],
   "repository": {
