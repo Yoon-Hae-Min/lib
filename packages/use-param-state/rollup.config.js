@@ -27,7 +27,7 @@ module.exports = [
       analyze(),
       babel({ extensions, babelHelpers: "bundled" }),
     ],
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom","react-router-dom"],
   },
   {
     input: "types/index.d.ts",
