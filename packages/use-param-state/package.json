@@ -1,6 +1,6 @@
 {
   "name": "@yoonhaemin-lib/use-param-state",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "",
   "keywords": [],
   "repository": {
@@ -59,6 +59,6 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "react-router-dom": ">=6" 
+    "react-router-dom": ">=6"
   }
 }
