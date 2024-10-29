@@ -11,7 +11,7 @@ const RouterElement = () => {
 };
 
 // 래퍼 컴포넌트로 MemoryRouter 사용
-const wrapper = ({ children }:PropsWithChildren) => {
+const wrapper = ({ children }: PropsWithChildren) => {
   return (
     <MemoryRouter initialEntries={['/test-path']}>
       <Routes>
@@ -42,15 +42,23 @@ describe('useParamState', () => {
     expect(screen.getByTestId('search-params').textContent).toBe('?param1=value1&param2=value2');
   });
 
+  it('초기값이 없으면 쿼리 파라미터에 반영되지 않아야 한다.', () => {
+    const { result } = renderHook(() => useParamState<{ param1?: string }>(), { wrapper });
+
+    // 상태가 반영되었는지 확인
+    expect(result.current[0]).toEqual({});
+
+    // URL이 업데이트되었는지 확인
+    expect(screen.getByTestId('search-params').textContent).toBe;
+  });
+
   it('setSearchParams로 쿼리 파라미터를 업데이트해야한다.', () => {
-    const initialValue = { param1: 'value1' };
 
     const { result } = renderHook(
       () =>
         useParamState<{
-          param1?: string;
           param2?: string;
-        }>(initialValue),
+        }>(),
       { wrapper },
     );
 

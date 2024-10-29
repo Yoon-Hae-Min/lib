@@ -9,7 +9,7 @@ type SearchParams = {
 export type ParamStateAction<T extends SearchParams> = T | ((prevState: T) => T);
 export type ParamStateSetter<T extends SearchParams> = (action: ParamStateAction<T>) => void;
 
-export const useParamState = <T extends SearchParams>(initialValue: T, options?: NavigateOptions) => {
+export const useParamState = <T extends SearchParams>(initialValue?: T, options?: NavigateOptions) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -24,6 +24,7 @@ export const useParamState = <T extends SearchParams>(initialValue: T, options?:
 
   // 초기값을 쿼리 파라미터에 반영
   useEffect(() => {
+    if(!initialValue) return;
     const params = new URLSearchParams(location.search);
 
     // initialValue의 키와 값을 쿼리 파라미터에 설정
