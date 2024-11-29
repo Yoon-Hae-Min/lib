@@ -13,7 +13,7 @@ interface RunSwaggerOptions {
 export const runSwagger = async ({ id, password, output, url }: RunSwaggerOptions) => {
   await generateApi({
     url: url,
-    templates: path.resolve(process.cwd(), '../templates'),
+    templates: path.resolve(__dirname, '../templates'),
     output: path.resolve(process.cwd(), output),
     ...(id && password ? { authorizationToken: `Basic ${btoa(`${id}:${password}`)}` } : {}),
     httpClientType: 'axios',
