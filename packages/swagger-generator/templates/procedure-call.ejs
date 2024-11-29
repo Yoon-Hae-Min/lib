@@ -120,7 +120,19 @@ const buildQueryKey = (path) => {
   });
 }
 
+const isSingleType = (type) => {
+  const types = [
+    "boolean",     
+    "number",      
+    "string",      
+    "symbol",      
+    "void",        
+    "undefined",   
+    "null"         
+  ];
 
+  return types.includes(type);
+}
 
 %>
 
@@ -154,7 +166,7 @@ const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this
   ...<%~ _.get(requestConfigParam, "name") %>,
   })
 
-  <% if (config.applyZodSchemaInAPI) { %>
+  <% if (config.applyZodSchemaInAPI && !isSingleType(type)) { %>
   <%= toCamelCase(type+ "Schema") %>.parse(response.data);
   <% } %>
 
