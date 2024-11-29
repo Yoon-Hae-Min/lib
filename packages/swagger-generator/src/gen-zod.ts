@@ -3,11 +3,12 @@ import { spawn } from 'child_process';
 interface RunZodProps {
   input: string;
   output: string;
+  skipValidation: boolean;
 }
 
-export const runZod = ({ input, output }: RunZodProps) => {
+export const runZod = ({ input, output, skipValidation }: RunZodProps) => {
   const command = 'ts-to-zod';
-  const args = [`${input}/data-contracts.ts`, `${output}/schema.ts`];
+  const args = [`${input}/data-contracts.ts`, `${output}/schema.ts`, skipValidation ? '--skipValidation' : ''];
 
   const childProcess = spawn(command, args);
 
