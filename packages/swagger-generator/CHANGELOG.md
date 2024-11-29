@@ -1,5 +1,15 @@
 # @yoonhaemin-lib/template
 
+## 1.1.0
+
+### Minor Changes
+
+- 149d1e5: fix: 단일로 response가 올 시 zod 검사를 진행하지 않도록 수정
+
+### Patch Changes
+
+- faa79d1: feat: zod 생성 옵션 추가
+
 ## 1.0.3
 
 ### Patch Changes
