@@ -76,6 +76,9 @@ const useDomain1Mutation = () => {
     --output                (required) output path of typescript api file
     --id                    (optional) use swagger scheme id
     --password              (optional) use swagger scheme password
+    --skipZodGeneration     (optional) skip zod schema generation
+    --applyAPIZodSchema     (optional) apply zod schema to api class
+    --skipValidation        (optional) skip validation type (ts-to-zod library)
 ```
 
 ### 기타 swagger 사용 주의사항
