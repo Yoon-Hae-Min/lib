@@ -1,5 +1,13 @@
 # @yoonhaemin-lib/template
 
+## 1.0.3
+
+### Patch Changes
+
+- 5ec6a3a: fix: swagger-generator template 참조 문제 해결
+  docs: 설치방법 docs 수정
+  docs: 실행 결과 및 FAQ추가
+
 ## 1.0.2
 
 ### Patch Changes
