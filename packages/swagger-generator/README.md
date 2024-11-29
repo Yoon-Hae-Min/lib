@@ -5,7 +5,7 @@ swagger를 기반으로 axios api class와 queryKey, zod schema를 자동으로 
 ### 설치 방법
 
 ```bash
-npm install @yoonhaemin/swagger-generator ts-to-zod zod axios
+npm install @yoonhaemin-lib/swagger-generator ts-to-zod zod axios
 ```
 
 ### 사용 방법
