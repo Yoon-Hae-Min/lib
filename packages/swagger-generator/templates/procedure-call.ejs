@@ -121,6 +121,7 @@ const buildQueryKey = (path) => {
 }
 
 
+
 %>
 
 
@@ -139,7 +140,7 @@ const buildQueryKey = (path) => {
 <% } %>
 
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
-<% if (payload) { %>
+<% if (payload && config.applyZodSchemaInAPI) { %>
 <%= toCamelCase(payload.type+ "Schema") %>.parse(data);
 <% } %>
 const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
@@ -152,8 +153,10 @@ const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this
   <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
   ...<%~ _.get(requestConfigParam, "name") %>,
   })
-  <%= toCamelCase(type+ "Schema") %>.parse(response.data);
 
+  <% if (config.applyZodSchemaInAPI) { %>
+  <%= toCamelCase(type+ "Schema") %>.parse(response.data);
+  <% } %>
 
   return response;
   };

@@ -2,6 +2,7 @@ import { btoa } from 'buffer';
 import * as path from 'path';
 import process from 'process';
 
+import type { GenerateApiParams } from 'swagger-typescript-api';
 import { generateApi } from 'swagger-typescript-api';
 
 interface RunSwaggerOptions {
@@ -9,8 +10,9 @@ interface RunSwaggerOptions {
   password?: string;
   output: string;
   url: string;
+  applyZodSchemaInAPI: boolean;
 }
-export const runSwagger = async ({ id, password, output, url }: RunSwaggerOptions) => {
+export const runSwagger = async ({ id, password, output, url, applyZodSchemaInAPI }: RunSwaggerOptions) => {
   await generateApi({
     url: url,
     templates: path.resolve(__dirname, '../templates'),
@@ -47,5 +49,6 @@ export const runSwagger = async ({ id, password, output, url }: RunSwaggerOption
       responseBodySuffix: ['Data', 'Result', 'Output'],
       responseErrorSuffix: ['Error', 'Fail', 'Fails', 'ErrorData', 'HttpError', 'BadResponse'],
     },
-  });
+    applyZodSchemaInAPI: applyZodSchemaInAPI,
+  } as GenerateApiParams);
 };
