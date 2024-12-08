@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 2.0.0
+
+### Major Changes
+
+- 090c561: feat: swagger-generator enum 생성 방식 변경
+
 ## 1.1.0
 
 ### Minor Changes
