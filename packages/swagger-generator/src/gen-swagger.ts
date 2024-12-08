@@ -24,7 +24,7 @@ export const runSwagger = async ({ id, password, output, url, applyZodSchemaInAP
     defaultResponseAsSuccess: true,
     extractRequestParams: true,
     extractRequestBody: true,
-    extractEnums: true,
+    extractEnums: false,
     prettier: {
       arrowParens: 'avoid',
       bracketSpacing: false,
