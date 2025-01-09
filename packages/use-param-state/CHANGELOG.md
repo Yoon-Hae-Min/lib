@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 1.0.3
+
+### Patch Changes
+
+- dc4b083: fix: 초기값에 대한 타이밍 이슈해결
+
 ## 1.0.2
 
 ### Patch Changes
