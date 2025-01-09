@@ -52,7 +52,7 @@ describe('useParamState', () => {
     expect(screen.getByTestId('search-params').textContent).toBe;
   });
 
-  it('setSearchParams로 쿼리 파라미터를 업데이트해야한다.', () => {
+  it('setSearchParams로 빈 쿼리 파라미터를 업데이트 해야한다.', () => {
     const { result } = renderHook(
       () =>
         useParamState<{
@@ -70,6 +70,24 @@ describe('useParamState', () => {
 
     // URL이 업데이트되었는지 확인
     expect(screen.getByTestId('search-params').textContent).toBe('?param2=newValue');
+  });
+  it('setSearchParams로 기존의 쿼리 파라미터를 업데이트 해야한다.', () => {
+    const { result: result2 } = renderHook(
+      () =>
+        useParamState<{
+          param1: string;
+          param2: string;
+        }>({ param1: 'value1', param2: 'value2' }),
+      { wrapper },
+    );
+    act(() => {
+      result2.current[1]({ param1: 'newValue', param2: 'newValue' });
+    });
+    // 상태가 반영되었는지 확인
+    expect(result2.current[0]).toEqual({ param1: 'newValue', param2: 'newValue' });
+
+    // URL이 업데이트되었는지 확인
+    expect(screen.getByTestId('search-params').textContent).toBe('?param1=newValue&param2=newValue');
   });
 
   it('setSearchParams는 function으로도 업데이트 되어야 한다.', () => {

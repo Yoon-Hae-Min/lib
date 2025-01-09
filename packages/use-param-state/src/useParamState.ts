@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useEffect } from 'react';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
 import type { NavigateOptions } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -12,11 +12,12 @@ export type ParamStateSetter<T extends SearchParams> = (action: ParamStateAction
 export const useParamState = <T extends SearchParams>(initialValue?: T, options?: NavigateOptions) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isFirstRender = useRef(true);
 
   // 현재 URL의 쿼리 파라미터를 파싱하여 객체로 변환
   const searchParams: T = useMemo(() => {
     const params = new URLSearchParams(location.search);
-    return Array.from(params.entries()).reduce((acc, [key, value]) => {
+    const parsedParams = Array.from(params.entries()).reduce((acc, [key, value]) => {
       try {
         // JSON으로 파싱 가능한 경우 중첩 객체로 복원
         acc[key as keyof T] = JSON.parse(value) as T[keyof T];
@@ -26,7 +27,18 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
       }
       return acc;
     }, {} as T);
-  }, [location.search]);
+
+    // initialValue와 merge (params 값이 우선)
+    if (initialValue && isFirstRender.current) {
+      Object.entries(initialValue).forEach(([key, value]) => {
+        if (!(key in parsedParams) || parsedParams[key as keyof T] === undefined) {
+          parsedParams[key as keyof T] = value as T[keyof T];
+        }
+      });
+    }
+
+    return parsedParams;
+  }, [initialValue, location.search]);
 
   // 초기값을 쿼리 파라미터에 반영
   useEffect(() => {
@@ -40,6 +52,7 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
       }
     });
 
+    isFirstRender.current = false;
     navigate(
       {
         pathname: location.pathname,
