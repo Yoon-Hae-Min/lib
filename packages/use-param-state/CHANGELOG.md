@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 1.0.1
+
+### Patch Changes
+
+- e454a97: fix: 중첩 객체도 처리할 수 있도록 수정
+
 ## 1.0.0
 
 ### Major Changes
