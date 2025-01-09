@@ -53,7 +53,6 @@ describe('useParamState', () => {
   });
 
   it('setSearchParams로 쿼리 파라미터를 업데이트해야한다.', () => {
-
     const { result } = renderHook(
       () =>
         useParamState<{
@@ -103,5 +102,27 @@ describe('useParamState', () => {
 
     // URL이 업데이트되었는지 확인
     expect(screen.getByTestId('search-params').textContent).toBe('?param1=value1');
+  });
+
+  it('setSearchParams에서 중첩 객체도 처리할 수 있어야 한다.', () => {
+    const initialValue = {
+      param1: 'value1',
+      param2: {
+        param3: 'value3',
+        param4: {
+          param5: 'value5',
+        },
+      },
+    };
+
+    const { result } = renderHook(() => useParamState<Partial<typeof initialValue>>(initialValue), { wrapper });
+
+    // 상태가 반영되었는지 확인
+    expect(result.current[0]).toEqual(initialValue);
+
+    // URL이 업데이트되었는지 확인
+    expect(screen.getByTestId('search-params').textContent).toBe(
+      '?param1=value1' + `&param2=${encodeURIComponent(JSON.stringify(initialValue.param2))}`,
+    );
   });
 });

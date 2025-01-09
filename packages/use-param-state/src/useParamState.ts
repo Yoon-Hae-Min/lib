@@ -3,7 +3,7 @@ import type { NavigateOptions } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 type SearchParams = {
-  [key: string]: string | undefined | null;
+  [key: string | number | symbol]: unknown | SearchParams;
 };
 
 export type ParamStateAction<T extends SearchParams> = T | ((prevState: T) => T);
@@ -17,20 +17,26 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
   const searchParams: T = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Array.from(params.entries()).reduce((acc, [key, value]) => {
-      acc[key as keyof T] = value as T[keyof T];
+      try {
+        // JSON으로 파싱 가능한 경우 중첩 객체로 복원
+        acc[key as keyof T] = JSON.parse(value) as T[keyof T];
+      } catch {
+        // JSON 파싱 실패 시 기본 값 사용
+        acc[key as keyof T] = value as T[keyof T];
+      }
       return acc;
     }, {} as T);
   }, [location.search]);
 
   // 초기값을 쿼리 파라미터에 반영
   useEffect(() => {
-    if(!initialValue) return;
+    if (!initialValue) return;
     const params = new URLSearchParams(location.search);
 
     // initialValue의 키와 값을 쿼리 파라미터에 설정
     Object.entries(initialValue).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        params.set(key, value);
+        params.set(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
       }
     });
 
@@ -52,7 +58,7 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
 
       Object.entries(resolvedNewParams).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
-          updatedParams.set(key, value);
+          updatedParams.set(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
         }
       });
 
@@ -63,7 +69,6 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
         },
         options,
       );
-
     },
     [navigate, location.pathname, searchParams, options, location.search],
   );
