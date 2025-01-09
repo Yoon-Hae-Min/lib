@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 1.0.2
+
+### Patch Changes
+
+- 14134bf: fix: 기존에 queryParam이 있을 경우 initalValue로 업데이트 하지 않음
+
 ## 1.0.1
 
 ### Patch Changes
