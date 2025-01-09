@@ -35,7 +35,7 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
 
     // initialValue의 키와 값을 쿼리 파라미터에 설정
     Object.entries(initialValue).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (!params.has(key) && value !== undefined && value !== null) {
         params.set(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
       }
     });
