@@ -1,9 +1,9 @@
-import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { flattenObject } from 'es-toolkit';
+import { useMemo, useCallback, useRef } from 'react';
 import type { NavigateOptions } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { hasAnyMatchingElementDeep, unFlattenObject } from './utils';
-import { flattenObject } from 'es-toolkit';
 
 type SearchParams = Record<string, any>;
 

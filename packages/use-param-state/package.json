@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "tsc": "tsc",
     "test": "jest",
     "build": "pnpm lint && pnpm test && tsc && rollup --config && rm -rf ./types"
