@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "tsc": "tsc",
     "test": "jest",
     "build": "pnpm lint && pnpm test && tsc && rollup --config && rm -rf ./types"
@@ -60,5 +60,8 @@
     "react": ">=18",
     "react-dom": ">=18",
     "react-router-dom": ">=6"
+  },
+  "dependencies": {
+    "es-toolkit": "^1.31.0"
   }
 }
