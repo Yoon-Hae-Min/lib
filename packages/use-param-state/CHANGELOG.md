@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 2.0.0
+
+### Major Changes
+
+- 8839101: feat: useQueryParam 2.0
+
 ## 1.0.3
 
 ### Patch Changes
