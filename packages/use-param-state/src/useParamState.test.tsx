@@ -129,4 +129,28 @@ describe('useParamState', () => {
       '?param1=value1&param2.param3=value3&param2.param4.param5.0=value5&param2.param4.param5.1=value6',
     );
   });
+
+  // 구현 및 생각 필요
+  // it('여러개의 hook을 사용해도 하나의 Url에 모두 적용되어야 한다.', () => {
+  //   const useCombinedParamState = () => {
+  //     const state1 = useParamState<{ param1: string; param2?: string }>({ param1: 'value1' });
+  //     const state2 = useParamState<{ param4: string; param3?: string }>({ param4: 'value3' });
+  //     return [state1, state2] as const;
+  //   };
+
+  //   const { result } = renderHook(() => useCombinedParamState(), { wrapper });
+  //   const [result1, result2] = result.current;
+
+  //   act(() => {
+  //     result1[1]({ param1: 'value1', param2: 'value2' });
+  //   });
+  //   act(() => {
+  //     result2[1]({ param3: 'value3', param4: 'value4' });
+  //   });
+
+  //   // URL이 업데이트되었는지 확인
+  //   expect(screen.getByTestId('search-params').textContent).toBe(
+  //     '?param1=value1&param2=value2&param3=value3&param4=value4',
+  //   );
+  // });
 });

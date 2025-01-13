@@ -40,3 +40,17 @@ export const unFlattenObject = <T extends Record<string, any>>(data: T): UnFlatt
 
   return result as UnFlattenObject<T>;
 };
+
+const isObjEmpty = (obj: object) => Object.keys(obj).length === 0;
+
+export const hasAnyMatchingElementDeep = (a: NestedObject, b: NestedObject): boolean => {
+  return Object.entries(b).some(([key, value]) => {
+    if (isObjEmpty(a) || isObjEmpty(b)) return false;
+
+    if (typeof value === 'object' && value !== null) {
+      return hasAnyMatchingElementDeep(a[key] as NestedObject, value);
+    } else {
+      return a[key] === value;
+    }
+  });
+};
