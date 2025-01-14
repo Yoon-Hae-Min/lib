@@ -104,29 +104,79 @@ describe('useParamState', () => {
     expect(screen.getByTestId('search-params').textContent).toBe('?param1=value1');
   });
 
-  it('setSearchParams에서 중첩 객체와 배열도 처리할 수 있어야 한다.', () => {
+  it('setSearchParams에서 중첩 객체와 중첩 배열도 처리할 수 있어야 한다.', () => {
     const initialValue = {
       param1: 'value1',
-      param2: {
-        param3: 'value3',
-        param4: {
-          param5: ['value5', 'value6'],
+      param2: [
+        {
+          param3: 'value3',
         },
-      },
+        {
+          param4: ['value4'],
+        },
+      ],
     };
 
-    const { result } = renderHook(() => useParamState<Partial<typeof initialValue>>(initialValue), { wrapper });
+    const { result } = renderHook(() => useParamState<Partial<typeof initialValue>>(), { wrapper });
 
     act(() => {
       result.current[1](initialValue);
     });
-
     // 상태가 반영되었는지 확인
-    expect(result.current[0]).toEqual(initialValue);
+    console.log(result.current[0]);
+    expect(result.current[0]).toEqual({
+      param1: 'value1',
+      param2: [
+        {
+          param3: 'value3',
+        },
+        {
+          param4: ['value4'],
+        },
+      ],
+    });
 
     // URL이 업데이트되었는지 확인
     expect(screen.getByTestId('search-params').textContent).toBe(
-      '?param1=value1&param2.param3=value3&param2.param4.param5.0=value5&param2.param4.param5.1=value6',
+      '?param1=value1&param2.0.param3=value3&param2.1.param4.0=value4',
+    );
+  });
+
+  it('setSearchParams에서 중첩 객체와 중첩 배열도 처리할 수 있어야 한다.', () => {
+    const initialValue = {
+      param1: 'value1',
+      param2: [
+        {
+          param3: 'value3',
+        },
+        {
+          param4: ['value4'],
+        },
+      ],
+    };
+
+    const { result } = renderHook(() => useParamState<Partial<typeof initialValue>>(), { wrapper });
+
+    act(() => {
+      result.current[1](initialValue);
+    });
+    // 상태가 반영되었는지 확인
+    console.log(result.current[0]);
+    expect(result.current[0]).toEqual({
+      param1: 'value1',
+      param2: [
+        {
+          param3: 'value3',
+        },
+        {
+          param4: ['value4'],
+        },
+      ],
+    });
+
+    // URL이 업데이트되었는지 확인
+    expect(screen.getByTestId('search-params').textContent).toBe(
+      '?param1=value1&param2.0.param3=value3&param2.1.param4.0=value4',
     );
   });
 
