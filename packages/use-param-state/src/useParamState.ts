@@ -15,6 +15,10 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
   const navigate = useNavigate();
   const usedKey = useRef(new Set<string>());
 
+  Object.keys(Object.fromEntries(new URLSearchParams(location.search).entries())).forEach((key) => {
+    usedKey.current.add(key);
+  });
+
   // 현재 URL의 쿼리 파라미터를 파싱하여 객체로 변환
   const searchParams = useMemo<T>(() => {
     const params = new URLSearchParams(location.search);
@@ -34,10 +38,11 @@ export const useParamState = <T extends SearchParams>(initialValue?: T, options?
       const resolvedNewParams: T = typeof newParams === 'function' ? newParams(searchParams) : newParams;
       const updatedParams = new URLSearchParams(location.search);
 
+      usedKey.current.forEach((key) => {
+        updatedParams.delete(key);
+      });
+
       Object.entries(flattenObject(resolvedNewParams)).forEach(([key, value]) => {
-        if (usedKey.current.has(key)) {
-          updatedParams.delete(key);
-        }
         if (value !== null && value !== undefined) {
           updatedParams.set(key, value);
         }
