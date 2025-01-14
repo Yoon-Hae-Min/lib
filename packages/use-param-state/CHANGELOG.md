@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 2.0.1
+
+### Patch Changes
+
+- 01a2590: fix: 중첩 객체를 처리하지 못하는 현상 해결
+
 ## 2.0.0
 
 ### Major Changes
