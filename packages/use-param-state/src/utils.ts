@@ -28,9 +28,10 @@ export const unFlattenObject = <T extends Record<string, any>>(data: T): UnFlatt
     if (currentIndex === keys.length - 1) {
       returnValue[key] = value;
       return returnValue;
+    } else {
+      returnValue[key] = setNestedValue(keys, value, currentIndex + 1);
+      return returnValue;
     }
-
-    return { [key]: setNestedValue(keys, value, currentIndex + 1) };
   };
 
   Object.entries(data).forEach(([key, value]) => {
