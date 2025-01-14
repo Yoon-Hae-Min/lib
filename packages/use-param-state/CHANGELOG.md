@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 2.0.2
+
+### Patch Changes
+
+- 3f023de: fix: query param에 값을 업데이트 하기 위해 해당 Hook에 할당된 key만 변경되어야 한다.
+
 ## 2.0.1
 
 ### Patch Changes
