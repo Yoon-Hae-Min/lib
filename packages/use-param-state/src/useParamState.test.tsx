@@ -160,8 +160,7 @@ describe('useParamState', () => {
     act(() => {
       result.current[1](initialValue);
     });
-    // 상태가 반영되었는지 확인
-    console.log(result.current[0]);
+
     expect(result.current[0]).toEqual({
       param1: 'value1',
       param2: [
@@ -179,6 +178,8 @@ describe('useParamState', () => {
       '?param1=value1&param2.0.param3=value3&param2.1.param4.0=value4',
     );
   });
+
+  // 빈객체와 빈 배열에 대한 생각 필요
 
   // 구현 및 생각 필요
   // it('여러개의 hook을 사용해도 하나의 Url에 모두 적용되어야 한다.', () => {
