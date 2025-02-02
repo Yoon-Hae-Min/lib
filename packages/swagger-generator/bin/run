@@ -23,11 +23,6 @@ async function main() {
       type: 'string',
       demandOption: true,
     })
-    .option('skipValidation', {
-      describe: 'ts-to-zod skipValidation',
-      type: 'boolean',
-      demandOption: false,
-    })
     .option('output', {
       describe: 'Output directory for the generated API client',
       type: 'string',
@@ -56,7 +51,6 @@ async function main() {
     runZod({
       input: argv.output,
       output: argv.output,
-      skipValidation: argv.skipValidation,
     });
 }
 

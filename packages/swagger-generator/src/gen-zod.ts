@@ -3,12 +3,12 @@ import { spawn } from 'child_process';
 interface RunZodProps {
   input: string;
   output: string;
-  skipValidation: boolean;
 }
 
-export const runZod = ({ input, output, skipValidation }: RunZodProps) => {
+export const runZod = ({ input, output }: RunZodProps) => {
   const command = 'ts-to-zod';
-  const args = [`${input}/data-contracts.ts`, `${output}/schema.ts`, skipValidation ? '--skipValidation' : ''];
+  const args = [`${input}/data-contracts.ts`, `${output}/schema.ts`, '--skipValidation'];
+  /** WARNING: ts-to-zod 라이브러리 상의 문제 때문에 타입을 생성하고 재 검증하는 과정의 validation을 꺼두도록 설정 라이브러리 디버깅 개발시에만 켜두고 검증 필요*/
 
   const childProcess = spawn(command, args);
 
