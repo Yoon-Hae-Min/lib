@@ -28,6 +28,11 @@ async function main() {
       type: 'string',
       demandOption: true,
     })
+    .option('extractEnums', {
+      describe: 'extractEnums flag in swagger-typescript-api',
+      type: 'boolean',
+      demandOption: false,
+    })
     .option('skipZodGeneration', {
       describe: 'Generate Zod schema from TypeScript types',
       type: 'boolean',
@@ -45,6 +50,7 @@ async function main() {
     url: argv.url,
     output: argv.output,
     applyZodSchemaInAPI: argv.applyZodSchemaInAPI,
+    extractEnums: argv.extractEnums,
   });
 
   !argv.skipZodGeneration &&
