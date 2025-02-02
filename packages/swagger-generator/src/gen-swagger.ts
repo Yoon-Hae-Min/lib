@@ -2,17 +2,31 @@ import { btoa } from 'buffer';
 import * as path from 'path';
 import process from 'process';
 
+import prettier from 'prettier';
 import type { GenerateApiParams } from 'swagger-typescript-api';
 import { generateApi } from 'swagger-typescript-api';
 
+const loadPrettierConfig = async () => {
+  const config = await prettier.resolveConfig(process.cwd());
+  return config;
+};
 interface RunSwaggerOptions {
   id?: string;
   password?: string;
   output: string;
   url: string;
   applyZodSchemaInAPI: boolean;
+  extractEnums: boolean;
 }
-export const runSwagger = async ({ id, password, output, url, applyZodSchemaInAPI }: RunSwaggerOptions) => {
+export const runSwagger = async ({
+  id,
+  password,
+  output,
+  url,
+  applyZodSchemaInAPI,
+  extractEnums,
+}: RunSwaggerOptions) => {
+  const prettierConfig = await loadPrettierConfig();
   await generateApi({
     url: url,
     templates: path.resolve(__dirname, '../templates'),
@@ -24,20 +38,8 @@ export const runSwagger = async ({ id, password, output, url, applyZodSchemaInAP
     defaultResponseAsSuccess: true,
     extractRequestParams: true,
     extractRequestBody: true,
-    extractEnums: false,
-    prettier: {
-      arrowParens: 'avoid',
-      bracketSpacing: false,
-      endOfLine: 'auto',
-      htmlWhitespaceSensitivity: 'css',
-      jsxSingleQuote: true,
-      printWidth: 120,
-      semi: true,
-      singleQuote: true,
-      tabWidth: 2,
-      trailingComma: 'all',
-      useTabs: false,
-    },
+    extractEnums: extractEnums,
+    prettier: prettierConfig,
     modular: true,
     moduleNameFirstTag: true,
     moduleNameIndex: 1,
