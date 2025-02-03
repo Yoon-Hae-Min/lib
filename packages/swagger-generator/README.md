@@ -7,14 +7,12 @@ swagger를 기반으로 api client와 tanstack queryKey, zod schema를 자동으
 1. api client, queryKey 생성
 
 ```bash
-npm install @yoonhaemin-lib/swagger-generator swagger-typescript-api
+npm install @yoonhaemin-lib/swagger-generator
 ```
 
-2. api client, queryKey, zod schema 생성
+#### 추가사항
 
-```bash
-npm install @yoonhaemin-lib/swagger-generator swagger-typescript-api ts-to-zod
-```
+- api client를 axios로 사용하고 싶다면 axios를 dependency로 추가해 주세요.
 
 ### 생성 방법
 
