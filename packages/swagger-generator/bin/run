@@ -41,6 +41,7 @@ async function main() {
     .option('extractEnums', {
       describe: 'extractEnums flag in swagger-typescript-api',
       type: 'boolean',
+      default: false,
       demandOption: false,
     })
     .option('skipZodGeneration', {
@@ -51,7 +52,7 @@ async function main() {
     .option('applyZodSchemaInAPI', {
       describe: 'Apply generated Zod schema in the API',
       type: 'boolean',
-      default: true,
+      default: false,
     }).argv;
 
   await runSwagger({
