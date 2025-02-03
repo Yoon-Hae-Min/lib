@@ -2,18 +2,15 @@ import { btoa } from 'buffer';
 import * as path from 'path';
 import process from 'process';
 
-import prettier from 'prettier';
 import type { GenerateApiParams } from 'swagger-typescript-api';
 import { generateApi } from 'swagger-typescript-api';
 
-const loadPrettierConfig = async () => {
-  const config = await prettier.resolveConfig(process.cwd());
-  return config;
-};
 interface RunSwaggerOptions {
   id?: string;
   password?: string;
+  httpClientType?: 'axios' | 'fetch';
   output: string;
+  input?: string;
   url: string;
   applyZodSchemaInAPI: boolean;
   extractEnums: boolean;
@@ -21,25 +18,26 @@ interface RunSwaggerOptions {
 export const runSwagger = async ({
   id,
   password,
+  httpClientType = 'fetch',
   output,
+  input,
   url,
   applyZodSchemaInAPI,
   extractEnums,
 }: RunSwaggerOptions) => {
-  const prettierConfig = await loadPrettierConfig();
   await generateApi({
     url: url,
     templates: path.resolve(__dirname, '../templates'),
     output: path.resolve(process.cwd(), output),
+    input: input && path.resolve(process.cwd(), input),
     ...(id && password ? { authorizationToken: `Basic ${btoa(`${id}:${password}`)}` } : {}),
-    httpClientType: 'axios',
+    httpClientType: httpClientType,
     generateClient: true,
     generateResponses: true,
     defaultResponseAsSuccess: true,
     extractRequestParams: true,
     extractRequestBody: true,
     extractEnums: extractEnums,
-    prettier: prettierConfig,
     modular: true,
     moduleNameFirstTag: true,
     moduleNameIndex: 1,

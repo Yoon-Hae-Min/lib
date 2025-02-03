@@ -18,6 +18,11 @@ async function main() {
       type: 'string',
       demandOption: false,
     })
+    .option('httpClientType', {
+      describe: 'httpClientType axios or fetch',
+      type: 'string',
+      demandOption: false,
+    })
     .option('url', {
       describe: 'URL of the OpenAPI specification',
       type: 'string',
@@ -27,6 +32,11 @@ async function main() {
       describe: 'Output directory for the generated API client',
       type: 'string',
       demandOption: true,
+    })
+    .option('input', {
+      describe: 'Input directory of the OpenAPI specification',
+      type: 'string',
+      demandOption: false,
     })
     .option('extractEnums', {
       describe: 'extractEnums flag in swagger-typescript-api',
@@ -49,6 +59,7 @@ async function main() {
     password: argv.password,
     url: argv.url,
     output: argv.output,
+    input: argv.input,
     applyZodSchemaInAPI: argv.applyZodSchemaInAPI,
     extractEnums: argv.extractEnums,
   });
