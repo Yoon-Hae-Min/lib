@@ -22,7 +22,8 @@
     "lint": "eslint .",
     "tsc": "tsc  --showConfig",
     "test": "jest",
-    "build": "pnpm lint && tsc"
+    "build": "tsc",
+    "build:prod": "pnpm lint && pnpm test && pnpm build"
   },
   "publishConfig": {
     "access": "public"

@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build --filter=!@yoonhaemin-lib/template",
+    "build:prod": "turbo build:prod --filter=!@yoonhaemin-lib/template",
     "dev": "turbo dev --filter=!@yoonhaemin-lib/template",
     "lint": "turbo lint --filter=!@yoonhaemin-lib/template",
     "test": "turbo test --filter=!@yoonhaemin-lib/template",
