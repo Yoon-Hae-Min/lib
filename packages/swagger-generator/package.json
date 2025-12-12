@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "eslint .",
     "tsc": "tsc  --showConfig",
-    "test": "jest",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "build": "tsc",
     "build:prod": "pnpm lint && pnpm test && pnpm build"
   },

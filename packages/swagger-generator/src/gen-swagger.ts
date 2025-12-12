@@ -9,12 +9,14 @@ interface RunSwaggerOptions {
   id?: string;
   password?: string;
   output: string;
-  url: string;
+  url?: string;
+  input?: string;
   applyZodSchemaInAPI: boolean;
 }
-export const runSwagger = async ({ id, password, output, url, applyZodSchemaInAPI }: RunSwaggerOptions) => {
+export const runSwagger = async ({id, password, output, url, input, applyZodSchemaInAPI}: RunSwaggerOptions) => {
   await generateApi({
-    url: url,
+    ...(url ? {url} : {}),
+    ...(input ? {input} : {}),
     templates: path.resolve(__dirname, '../templates'),
     output: path.resolve(process.cwd(), output),
     ...(id && password ? { authorizationToken: `Basic ${btoa(`${id}:${password}`)}` } : {}),
