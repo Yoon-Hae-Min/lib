@@ -1,31 +1,66 @@
-# useModal
+# @yoonhaemin-lib/use-modal
 
-## 개요
+> React에서 모달을 쉽게 관리할 수 있는 Hook
 
-Modal관리를 쉽게 해주는 hook입니다.
+## Features
 
-- esc키를 누르면 모달이 닫힙니다.
-- 중첩 모달에 대한 지원
-- 단일 overlay 지원
-- 모달이 열려있는 동안 스크롤 막기.
+- ✅ **간단한 API** - 선언적이고 직관적인 모달 관리
+- ✅ **ESC 키 지원** - ESC 키로 모달 닫기
+- ✅ **중첩 모달** - 여러 모달을 동시에 관리
+- ✅ **스크롤 잠금** - 모달 열림 시 배경 스크롤 방지
+- ✅ **커스텀 오버레이** - 오버레이 스타일 커스터마이징
 
----
+## Installation
 
-## 기본 사용법
+```bash
+npm install @yoonhaemin-lib/use-modal
+```
 
-`useModal` 훅과 `ModalProvider`를 사용하여 모달 컴포넌트를 열고 닫는 기능을 구현할 수 있습니다.
+```bash
+yarn add @yoonhaemin-lib/use-modal
+```
 
-### 예시 코드
+```bash
+pnpm add @yoonhaemin-lib/use-modal
+```
 
-#### 기본 사용 방법
+## Quick Start
 
 ```tsx
-import { ModalProvider } from '@gomterview/useModal';
+import { ModalProvider, useModal } from '@yoonhaemin-lib/use-modal';
 
 function App() {
   return (
-    // Provide the client to your App
+    <ModalProvider>
+      <MyComponent />
+    </ModalProvider>
+  );
+}
 
+function MyComponent() {
+  const { openModal, closeModal } = useModal(() => (
+    <div>
+      <h2>모달 제목</h2>
+      <p>모달 내용</p>
+      <button onClick={closeModal}>닫기</button>
+    </div>
+  ));
+
+  return <button onClick={openModal}>모달 열기</button>;
+}
+```
+
+## Usage
+
+### 기본 사용법
+
+`ModalProvider`로 앱을 감싸고, `useModal` 훅을 사용하여 모달을 제어합니다.
+
+```tsx
+import { ModalProvider, useModal } from '@yoonhaemin-lib/use-modal';
+
+function App() {
+  return (
     <ModalProvider>
       <Example />
     </ModalProvider>
@@ -33,64 +68,108 @@ function App() {
 }
 
 function Example() {
-  const { openModal, closeModal } = useModal(() => {
+  const { openModal, closeModal, isOpen } = useModal(() => {
     return (
-      <div>
-        <span>Modal Content</span>
-        <button onClick={closeModal}>Close Modal</button>
+      <div style={{ padding: '20px', background: 'white', borderRadius: '8px' }}>
+        <h2>알림</h2>
+        <p>모달이 열렸습니다!</p>
+        <button onClick={closeModal}>닫기</button>
       </div>
     );
   });
 
-  return <button onClick={openModal}>Open Modal</button>;
+  return (
+    <div>
+      <button onClick={openModal}>모달 열기</button>
+      <p>모달 상태: {isOpen ? '열림' : '닫힘'}</p>
+    </div>
+  );
 }
 ```
 
-버튼을 클릭하면 모달이 열리고, 모달 안에서 닫기 버튼을 클릭하면 모달이 닫힙니다.
+### 커스텀 오버레이
 
-#### 커스텀 오버레이 사용 방법
+`ModalProvider`에 커스텀 `Overlay` 컴포넌트를 전달하여 오버레이를 커스터마이징할 수 있습니다.
 
 ```tsx
-import { ModalProvider } from '@gomterview/useModal';
+import { ModalProvider, useModal } from '@yoonhaemin-lib/use-modal';
+
+function CustomOverlay({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function App() {
   return (
-    // Provide the client to your App
     <ModalProvider Overlay={CustomOverlay}>
       <Example />
     </ModalProvider>
   );
 }
+```
 
-function CustomOverlay({ children }) {
-  return <div style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>{children}</div>;
-}
+### 중첩 모달
 
-function Example() {
-  const { openModal, closeModal } = useModal(() => {
+여러 모달을 순차적으로 열 수 있습니다.
+
+```tsx
+import { useModal } from '@yoonhaemin-lib/use-modal';
+
+function NestedModalExample() {
+  const { openModal: openFirst, closeModal: closeFirst } = useModal(() => <FirstModal />);
+
+  const { openModal: openSecond, closeModal: closeSecond } = useModal(() => <SecondModal />);
+
+  function FirstModal() {
     return (
-      <div>
-        <span>Modal Content</span>
-        <button onClick={closeModal}>Close Modal</button>
+      <div style={{ padding: '20px', background: 'white', borderRadius: '8px' }}>
+        <h2>첫 번째 모달</h2>
+        <button onClick={openSecond}>두 번째 모달 열기</button>
+        <button onClick={closeFirst}>닫기</button>
       </div>
     );
-  });
+  }
 
-  return <button onClick={openModal}>Open Modal</button>;
+  function SecondModal() {
+    return (
+      <div style={{ padding: '20px', background: 'white', borderRadius: '8px' }}>
+        <h2>두 번째 모달</h2>
+        <p>첫 번째 모달 위에 열립니다</p>
+        <button onClick={closeSecond}>닫기</button>
+      </div>
+    );
+  }
+
+  return <button onClick={openFirst}>모달 열기</button>;
 }
 ```
 
----
-
 ## API Reference
 
-### `useModal` 매개변수
+### `useModal(component)`
 
-| 매개변수    | 타입       | 설명                         | 필수 여부 |
-| ----------- | ---------- | ---------------------------- | --------- |
-| `component` | `React.FC` | 모달로 표시할 React 컴포넌트 | O         |
+#### 매개변수
 
-### `useModal` 반환값
+| 매개변수    | 타입                    | 설명                              |
+| ----------- | ----------------------- | --------------------------------- |
+| `component` | `() => React.ReactNode` | 모달로 표시할 React 컴포넌트 함수 |
+
+#### 반환값
 
 | 반환값       | 타입         | 설명                    |
 | ------------ | ------------ | ----------------------- |
@@ -98,15 +177,33 @@ function Example() {
 | `openModal`  | `() => void` | 모달을 여는 함수        |
 | `closeModal` | `() => void` | 모달을 닫는 함수        |
 
----
+### `ModalProvider`
 
-### `ModalProvider` 매개변수
+#### Props
 
-| 매개변수   | 타입              | 설명                                    | 필수 여부 |
-| ---------- | ----------------- | --------------------------------------- | --------- |
-| `children` | `React.ReactNode` | 모달 프로바이더 내부에 위치한 자식 노드 | O         |
-| `Overlay`  | `React.FC`        | 모달이 열릴 때 표시될 오버레이 컴포넌트 | X         |
+| Props      | 타입                                           | 필수 | 설명                                    |
+| ---------- | ---------------------------------------------- | ---- | --------------------------------------- |
+| `children` | `React.ReactNode`                              | ✅   | 모달 프로바이더 내부에 위치한 자식 노드 |
+| `Overlay`  | `React.ComponentType<{ children: ReactNode }>` | ❌   | 커스텀 오버레이 컴포넌트                |
 
-## 실습하기
+## 기능 상세
 
-해당 기능을 실습할 수 있는 링크는 [여기](https://codesandbox.io/p/sandbox/usemodal-ktv8ws)를 클릭하여 확인할 수 있습니다.
+### ESC 키로 모달 닫기
+
+모달이 열려 있을 때 ESC 키를 누르면 자동으로 가장 최근에 열린 모달이 닫힙니다.
+
+### 배경 스크롤 방지
+
+모달이 열리면 자동으로 배경 페이지의 스크롤이 방지됩니다. 모달이 모두 닫히면 스크롤이 다시 활성화됩니다.
+
+### 중첩 모달 관리
+
+여러 모달을 동시에 열 수 있으며, 각 모달은 독립적으로 관리됩니다. ESC 키를 누르면 가장 최근에 열린 모달부터 순서대로 닫힙니다.
+
+## Examples
+
+실제 동작하는 예제는 [CodeSandbox](https://codesandbox.io/p/sandbox/usemodal-ktv8ws)에서 확인할 수 있습니다.
+
+## License
+
+MIT © [Yoon Hae Min](https://github.com/Yoon-Hae-Min)
