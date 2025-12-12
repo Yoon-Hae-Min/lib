@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/use-modal
 
+## 1.1.4
+
+### Patch Changes
+
+- 224e37e: docs: 프로젝트 및 패키지 문서 개선
+
 ## 1.1.3
 
 ### Patch Changes

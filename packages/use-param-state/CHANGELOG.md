@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 2.0.3
+
+### Patch Changes
+
+- 224e37e: docs: 프로젝트 및 패키지 문서 개선
+
 ## 2.0.2
 
 ### Patch Changes
