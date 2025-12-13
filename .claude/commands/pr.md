@@ -90,6 +90,9 @@
    - 새 커밋이 없으면: "이미 모든 커밋이 PR에 반영되어 있습니다" 메시지 출력
    - 새 커밋이 있으면:
      - `git push origin <브랜치명>`으로 새 커밋 푸시 (이미 추적 중이므로 -u 불필요)
-     - `gh pr edit <PR번호> --body "<업데이트된 본문>"` 사용하여 PR 본문 업데이트
+     - PR 본문을 `/tmp/pr-body.md` 파일로 작성
+     - `gh api repos/<owner>/<repo>/pulls/<PR번호> -X PATCH -f body="$(cat /tmp/pr-body.md)"` 사용하여 PR 본문 업데이트
+       - REST API를 직접 사용하여 GitHub Projects classic deprecated 이슈 회피
+       - `gh pr edit` 대신 REST API를 사용하면 GraphQL 에러 발생 없음
      - 업데이트된 PR URL 반환
      - "기존 PR에 N개의 새로운 커밋이 추가되었습니다" 메시지 출력

@@ -1,142 +1,23 @@
 <%
-const { utils, route, config,modelTypes } = it;
-const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
-const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
-const { parameters, path, method, payload, query, formData, security, requestParams,...args } = route.request;
-const { type, errorType, contentTypes } = route.response;
-const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
+// ============================================================================
+// 데이터 준비
+// ============================================================================
+const { utils, route, config, procedureHelpers,commonHelpers } = it;
+const { preprocessed } = route;
+const { path, method, payload } = route.request;
+const { type, errorType } = route.response;
+const { _ } = utils;
+
+// 라우트 문서
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
-const queryName = (query && query.name) || "query";
-const pathParams = _.values(parameters);
-const pathParamsNames = _.map(pathParams, "name");
-const dataContracts = _.map(modelTypes, "name");
 
-const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
-
-const requestConfigParam = {
-    name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
-    optional: true,
-    type: "RequestParams",
-    defaultValue: "{}",
-}
-
-const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
-
-const rawWrapperArgs = config.extractRequestParams ?
-    _.compact([
-        requestParams && {
-          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
-          optional: false,
-          type: getInlineParseContent(requestParams),
-        },
-        ...(!requestParams ? pathParams : []),
-        payload,
-        requestConfigParam,
-    ]) :
-    _.compact([
-        ...pathParams,
-        query,
-        payload,
-        requestConfigParam,
-    ])
-
-const queryKeyProps = _.sortBy(_.compact([
-requestParams && {
-          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
-          optional: false,
-          type: getInlineParseContent(requestParams),
-        },
-        ...(!requestParams ? pathParams : []),
-]),[o => o.optional]).map(argToTmpl)
-.join(', ')
-
-
-const wrapperArgs = _
-    // Sort by optionality
-    .sortBy(rawWrapperArgs, [o => o.optional])
-    .map(argToTmpl)
-    .join(', ')
-
-// RequestParams["type"]
-const requestContentKind = {
-    "JSON": "ContentType.Json",
-    "URL_ENCODED": "ContentType.UrlEncoded",
-    "FORM_DATA": "ContentType.FormData",
-    "TEXT": "ContentType.Text",
-}
-// RequestParams["format"]
-const responseContentKind = {
-    "JSON": '"json"',
-    "IMAGE": '"blob"',
-    "FORM_DATA": isFetchTemplate ? '"formData"' : '"document"'
-}
-
-const bodyTmpl = _.get(payload, "name") || null;
-const queryTmpl = (query != null && queryName) || null;
-const bodyContentKindTmpl = requestContentKind[requestBodyInfo.contentKind] || null;
-const responseFormatTmpl = responseContentKind[responseBodyInfo.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind] || null;
-const securityTmpl = security ? 'true' : null;
-
-const describeReturnType = () => {
-    if (!config.toJS) return "";
-
-    switch(config.httpClientType) {
-        case HTTP_CLIENT.AXIOS: {
-          return `Promise<AxiosResponse<${type}>>`
-        }
-        default: {
-          return `Promise<HttpResponse<${type}, ${errorType}>`
-        }
-    }
-}
-
-
-
-const TemplateLiteralRegex = /\$\{([^}]+)\}/g
-
-const toCamelCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
-  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 첫 단어 제외, 각 단어 첫 글자를 대문자로 변환
-  .replace(/^[A-Z]/, (firstLetter) => firstLetter.toLowerCase());  // 첫 번째 단어의 첫 글자는 소문자로 변환
-
-  const toPascalCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
-  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 각 단어의 첫 글자를 대문자로 변환
-  .replace(/^[a-z]/, (firstLetter) => firstLetter.toUpperCase());  // 첫 번째 단어의 첫 글자도 대문자로 변환
-
-const isGetMethod = (method) => method === "get";
-
-/**
- * @description queryKey를 생성합니다.
- * @example /api/posts/{postId} => ['api', 'posts', postId]
- */
-const buildQueryKey = (path) => {
-  const pathArr = path.split("/");
-  return pathArr.filter(v=>v).map((v) => {
-    if(v.match(TemplateLiteralRegex)){
-      return v.replace(TemplateLiteralRegex, '$1');
-    }
-    else{
-      return `'${v}'`;
-    }
-  });
-}
-
-const isSingleType = (type) => {
-  const types = [
-    "boolean",     
-    "number",      
-    "string",      
-    "symbol",      
-    "void",        
-    "undefined",   
-    "null"         
-  ];
-
-  return types.includes(type);
-}
-
+// Helper 함수를 통해 모든 값 계산
+const requestConfigParam = procedureHelpers.buildRequestConfigParam(route, config);
+const wrapperArgs = procedureHelpers.buildWrapperArgs(route, config, utils, requestConfigParam);
+const queryKeyProps = procedureHelpers.buildQueryKeyProps(route, utils);
+const contentVars = procedureHelpers.buildContentTypeVariables(route, config);
+const returnType = procedureHelpers.buildReturnType(route, config);
 %>
-
-
 
 /**
 <%~ routeDocs.description %>
@@ -147,28 +28,31 @@ const isSingleType = (type) => {
 
 */
 
-<% if(isGetMethod(method)){%>
-<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~buildQueryKey(path) %>,<% if (queryTmpl) { %>query,<% } %>]
-<% } %>
+<% if(commonHelpers.isGetMethod(method)){%>
 
-<%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
-<% if (payload && config.applyZodSchemaInAPI) { %>
-<%= toCamelCase(payload.type+ "Schema") %>.parse(data);
+<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~commonHelpers.buildQueryKey(path) %>,<% if (contentVars.queryTmpl) { %><%~ contentVars.queryTmpl %>,<% } %>]
+
+<% } else { %>
+
 <% } %>
-const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
-  path: `<%~ path %>`,
-  method: '<%~ _.upperCase(method) %>',
-  <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
-  <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
-  <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
-  <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
-  <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
-  ...<%~ _.get(requestConfigParam, "name") %>,
+<%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${returnType}` : "" %> => {
+<% if (payload?.type) { %>
+  <%= commonHelpers.getSchemaName(payload.type) %>.parse(data);
+<% } %>
+  const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
+    path: `<%~ path %>`,
+    method: '<%~ _.upperCase(method) %>',
+    <%~ contentVars.queryTmpl ? `query: ${contentVars.queryTmpl},` : '' %>
+    <%~ contentVars.bodyTmpl ? `body: ${contentVars.bodyTmpl},` : '' %>
+    <%~ contentVars.securityTmpl ? `secure: ${contentVars.securityTmpl},` : '' %>
+    <%~ contentVars.bodyContentKindTmpl ? `type: ${contentVars.bodyContentKindTmpl},` : '' %>
+    <%~ contentVars.responseFormatTmpl ? `format: ${contentVars.responseFormatTmpl},` : '' %>
+    ...<%~ requestConfigParam.name %>,
   })
 
-  <% if (config.applyZodSchemaInAPI && !isSingleType(type)) { %>
-  <%= toCamelCase(type+ "Schema") %>.parse(response.data);
-  <% } %>
+<% if (commonHelpers.getSchemaName(type)) { %>
+  <%= commonHelpers.getSchemaName(type) %>.parse(response.data);
+<% } %>
 
   return response;
-  };
+};

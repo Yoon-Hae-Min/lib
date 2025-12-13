@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "",
   "keywords": [],
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/Yoon-Hae-Min/lib",
@@ -21,7 +22,7 @@
   "scripts": {
     "lint": "eslint .",
     "tsc": "tsc  --showConfig",
-    "test": "jest",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "build": "tsc",
     "build:prod": "pnpm lint && pnpm test && pnpm build"
   },
@@ -31,7 +32,8 @@
   "types": "lib/index.d.ts",
   "main": "lib/index.js",
   "dependencies": {
-    "swagger-typescript-api": "^13.0.22",
+    "prettier": "^3.4.2",
+    "swagger-typescript-api": "^13.2.16",
     "ts-to-zod": "^3.13.0",
     "yargs": "^17.7.2",
     "zod": "^3.23.8"
@@ -49,7 +51,7 @@
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^29.5.13",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.11.24",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
