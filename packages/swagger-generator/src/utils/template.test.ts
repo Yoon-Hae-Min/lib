@@ -6,7 +6,7 @@ import {
   isGetMethod,
   isPrimitiveType,
   getSchemaNames,
-} from './template-helpers';
+} from './template';
 
 describe('template-helpers', () => {
   describe('buildQueryKey', () => {

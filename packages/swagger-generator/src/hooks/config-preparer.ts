@@ -2,37 +2,37 @@
  * onPrepareConfig 훅에서 사용할 설정 전처리 로직
  */
 
-import * as procedureHelpersModule from '../helpers/procedure-helpers';
-import * as templateHelpers from '../helpers/template-helpers';
+import * as procedureUtils from '../utils/procedure';
+import * as templateUtils from '../utils/template';
 
 /**
  * API 템플릿에서 사용할 헬퍼 함수들
  */
 const apiHelpers = {
-  getSchemaNames: templateHelpers.getSchemaNames,
+  getSchemaNames: templateUtils.getSchemaNames,
 };
 
 /**
  * Procedure 템플릿에서 사용할 헬퍼 함수들
  */
 const procedureHelpers = {
-  buildWrapperArgs: procedureHelpersModule.buildWrapperArgs,
-  buildQueryKeyProps: procedureHelpersModule.buildQueryKeyProps,
-  buildContentTypeVariables: procedureHelpersModule.buildContentTypeVariables,
-  buildReturnType: procedureHelpersModule.buildReturnType,
-  buildRequestConfigParam: procedureHelpersModule.buildRequestConfigParam,
+  buildWrapperArgs: procedureUtils.buildWrapperArgs,
+  buildQueryKeyProps: procedureUtils.buildQueryKeyProps,
+  buildContentTypeVariables: procedureUtils.buildContentTypeVariables,
+  buildReturnType: procedureUtils.buildReturnType,
+  buildRequestConfigParam: procedureUtils.buildRequestConfigParam,
 };
 
 /**
  * 공통 헬퍼 함수들 (필요시 사용)
  */
 const commonHelpers = {
-  toCamelCase: templateHelpers.toCamelCase,
-  toPascalCase: templateHelpers.toPascalCase,
-  buildQueryKey: templateHelpers.buildQueryKey,
-  isGetMethod: templateHelpers.isGetMethod,
-  isPrimitiveType: templateHelpers.isPrimitiveType,
-  getSchemaName: templateHelpers.getSchemaName,
+  toCamelCase: templateUtils.toCamelCase,
+  toPascalCase: templateUtils.toPascalCase,
+  buildQueryKey: templateUtils.buildQueryKey,
+  isGetMethod: templateUtils.isGetMethod,
+  isPrimitiveType: templateUtils.isPrimitiveType,
+  getSchemaName: templateUtils.getSchemaName,
 };
 
 /**
