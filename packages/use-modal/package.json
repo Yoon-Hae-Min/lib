@@ -1,12 +1,12 @@
 {
   "name": "@yoonhaemin-lib/use-modal",
   "version": "1.1.4",
-  "description": "",
+  "description": "Easy modal management for React with ESC key support, nested modals, and scroll locking",
   "keywords": [],
   "repository": {
     "type": "git",
     "url": "https://github.com/Yoon-Hae-Min/lib",
-    "directory": ""
+    "directory": "packages/use-modal"
   },
   "private": false,
   "license": "MIT",
