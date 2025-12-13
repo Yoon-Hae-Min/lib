@@ -31,7 +31,7 @@
   "types": "lib/index.d.ts",
   "main": "lib/index.js",
   "dependencies": {
-    "swagger-typescript-api": "^13.0.22",
+    "swagger-typescript-api": "^13.2.16",
     "ts-to-zod": "^3.13.0",
     "yargs": "^17.7.2",
     "zod": "^3.23.8"
