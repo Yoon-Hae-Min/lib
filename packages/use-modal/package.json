@@ -57,6 +57,6 @@
     "typescript": "^5"
   },
   "peerDependencies": {
-    "react": "^18"
+    "react": ">=18"
   }
 }

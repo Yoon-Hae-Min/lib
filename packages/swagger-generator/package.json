@@ -70,7 +70,6 @@
     "typescript": "^5"
   },
   "peerDependencies": {
-    "react": ">=18",
     "ts-to-zod": ">=3"
   }
 }
