@@ -1,15 +1,17 @@
 <%
-const { utils, route, config,modelTypes } = it;
+const { utils, route, config, modelTypes, commonHelpers } = it;
 const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
-const { _, getInlineParseContent, getParseContent, parseSchema, getComponentByRef, require } = utils;
-const { parameters, path, method, payload, query, formData, security, requestParams,...args } = route.request;
-const { type, errorType, contentTypes } = route.response;
+const { _, getInlineParseContent } = utils;
+const { parameters, path, method, payload, query, security, requestParams } = route.request;
+const { type, errorType } = route.response;
 const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
 const queryName = (query && query.name) || "query";
 const pathParams = _.values(parameters);
 const pathParamsNames = _.map(pathParams, "name");
-const dataContracts = _.map(modelTypes, "name");
+
+// 전처리된 데이터 가져오기
+const preprocessed = route.preprocessed;
 
 const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
 
@@ -50,9 +52,7 @@ requestParams && {
 ]),[o => o.optional]).map(argToTmpl)
 .join(', ')
 
-
 const wrapperArgs = _
-    // Sort by optionality
     .sortBy(rawWrapperArgs, [o => o.optional])
     .map(argToTmpl)
     .join(', ')
@@ -89,51 +89,6 @@ const describeReturnType = () => {
         }
     }
 }
-
-
-
-const TemplateLiteralRegex = /\$\{([^}]+)\}/g
-
-const toCamelCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
-  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 첫 단어 제외, 각 단어 첫 글자를 대문자로 변환
-  .replace(/^[A-Z]/, (firstLetter) => firstLetter.toLowerCase());  // 첫 번째 단어의 첫 글자는 소문자로 변환
-
-  const toPascalCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
-  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 각 단어의 첫 글자를 대문자로 변환
-  .replace(/^[a-z]/, (firstLetter) => firstLetter.toUpperCase());  // 첫 번째 단어의 첫 글자도 대문자로 변환
-
-const isGetMethod = (method) => method === "get";
-
-/**
- * @description queryKey를 생성합니다.
- * @example /api/posts/{postId} => ['api', 'posts', postId]
- */
-const buildQueryKey = (path) => {
-  const pathArr = path.split("/");
-  return pathArr.filter(v=>v).map((v) => {
-    if(v.match(TemplateLiteralRegex)){
-      return v.replace(TemplateLiteralRegex, '$1');
-    }
-    else{
-      return `'${v}'`;
-    }
-  });
-}
-
-const isSingleType = (type) => {
-  const types = [
-    "boolean",     
-    "number",      
-    "string",      
-    "symbol",      
-    "void",        
-    "undefined",   
-    "null"         
-  ];
-
-  return types.includes(type);
-}
-
 %>
 
 
@@ -147,13 +102,13 @@ const isSingleType = (type) => {
 
 */
 
-<% if(isGetMethod(method)){%>
-<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~buildQueryKey(path) %>,<% if (queryTmpl) { %>query,<% } %>]
+<% if(preprocessed.isGetMethod){%>
+<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~preprocessed.queryKey %>,<% if (queryTmpl) { %>query,<% } %>]
 <% } %>
 
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
-<% if (payload && config.applyZodSchemaInAPI) { %>
-<%= toCamelCase(payload.type+ "Schema") %>.parse(data);
+<% if (payload && config.applyZodSchemaInAPI && preprocessed.payloadSchemaName) { %>
+<%= preprocessed.payloadSchemaName %>.parse(data);
 <% } %>
 const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
   path: `<%~ path %>`,
@@ -166,8 +121,8 @@ const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this
   ...<%~ _.get(requestConfigParam, "name") %>,
   })
 
-  <% if (config.applyZodSchemaInAPI && !isSingleType(type)) { %>
-  <%= toCamelCase(type+ "Schema") %>.parse(response.data);
+  <% if (config.applyZodSchemaInAPI && !preprocessed.isPrimitiveResponseType && preprocessed.responseSchemaName) { %>
+  <%= preprocessed.responseSchemaName %>.parse(response.data);
   <% } %>
 
   return response;

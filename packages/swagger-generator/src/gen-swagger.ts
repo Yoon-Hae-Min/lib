@@ -5,6 +5,9 @@ import process from 'process';
 import type { GenerateApiParams } from 'swagger-typescript-api';
 import { generateApi } from 'swagger-typescript-api';
 
+import { prepareConfig } from './hooks/config-preparer';
+import { preprocessRoute } from './hooks/route-preprocessor';
+
 interface RunSwaggerOptions {
   id?: string;
   password?: string;
@@ -13,10 +16,11 @@ interface RunSwaggerOptions {
   input?: string;
   applyZodSchemaInAPI: boolean;
 }
-export const runSwagger = async ({id, password, output, url, input, applyZodSchemaInAPI}: RunSwaggerOptions) => {
+
+export const runSwagger = async ({ id, input, password, output, url, applyZodSchemaInAPI }: RunSwaggerOptions) => {
   await generateApi({
-    ...(url ? {url} : {}),
-    ...(input ? {input} : {}),
+    ...(url ? { url } : {}),
+    ...(input ? { input } : {}),
     templates: path.resolve(__dirname, '../templates'),
     output: path.resolve(process.cwd(), output),
     ...(id && password ? { authorizationToken: `Basic ${btoa(`${id}:${password}`)}` } : {}),
@@ -52,5 +56,9 @@ export const runSwagger = async ({id, password, output, url, input, applyZodSche
       responseErrorSuffix: ['Error', 'Fail', 'Fails', 'ErrorData', 'HttpError', 'BadResponse'],
     },
     applyZodSchemaInAPI: applyZodSchemaInAPI,
+    hooks: {
+      onCreateRoute: preprocessRoute,
+      onPrepareConfig: prepareConfig,
+    },
   } as GenerateApiParams);
 };

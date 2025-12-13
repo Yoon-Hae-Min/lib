@@ -1,17 +1,10 @@
 <%
-const { utils, route, config, modelTypes } = it;
-const { _, pascalCase, require } = utils;
+const { utils, route, config, modelTypes, apiHelpers } = it;
+const { _, pascalCase } = utils;
 const apiClassName = pascalCase(route.moduleName);
 const routes = route.routes;
 const dataContracts = _.map(modelTypes, "name");
-
-
-const TemplateLiteralRegex = /\$\{([^}]+)\}/g
-
-const toCamelCase = (str) => str.replace(TemplateLiteralRegex, '$1') // 템플릿 리터럴 제외
-  .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase()) // 첫 단어 제외, 각 단어 첫 글자를 대문자로 변환
-  .replace(/^[A-Z]/, (firstLetter) => firstLetter.toLowerCase());  // 첫 번째 단어의 첫 글자는 소문자로 변환
-
+const schemaNames = apiHelpers.getSchemaNames(dataContracts);
 %>
 
 <% if (config.httpClientType === config.constants.HTTP_CLIENT.AXIOS) { %> import type { AxiosRequestConfig, AxiosResponse } from "axios"; <% } %>
@@ -22,7 +15,7 @@ import { <%~ dataContracts.join(", ") %> } from "./<%~ config.fileNames.dataCont
 <% } %>
 
 <% if (dataContracts.length) {%>
-import { <%~ dataContracts.map((v)=>toCamelCase(v+"Schema")).join(", ") %> } from "./schema"
+import { <%~ schemaNames.join(", ") %> } from "./schema"
 <% } %>
 
 export class <%= apiClassName %><SecurityDataType=unknown><% if (!config.singleHttpClient) { %> extends HttpClient<SecurityDataType> <% } %> {
