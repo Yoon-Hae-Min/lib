@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "",
   "keywords": [],
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/Yoon-Hae-Min/lib",
@@ -31,6 +32,7 @@
   "types": "lib/index.d.ts",
   "main": "lib/index.js",
   "dependencies": {
+    "prettier": "^3.4.2",
     "swagger-typescript-api": "^13.2.16",
     "ts-to-zod": "^3.13.0",
     "yargs": "^17.7.2",

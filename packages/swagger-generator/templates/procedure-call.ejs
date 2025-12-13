@@ -1,19 +1,26 @@
 <%
+// ============================================================================
+// 데이터 준비
+// ============================================================================
 const { utils, route, config, modelTypes, commonHelpers } = it;
 const { requestBodyInfo, responseBodyInfo, specificArgNameResolver } = route;
 const { _, getInlineParseContent } = utils;
 const { parameters, path, method, payload, query, security, requestParams } = route.request;
 const { type, errorType } = route.response;
 const { HTTP_CLIENT, RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
+
+// 전처리된 데이터
+const preprocessed = route.preprocessed;
+
+// 라우트 문서
 const routeDocs = includeFile("@base/route-docs", { config, route, utils });
+
+// ============================================================================
+// 파라미터 설정
+// ============================================================================
 const queryName = (query && query.name) || "query";
 const pathParams = _.values(parameters);
 const pathParamsNames = _.map(pathParams, "name");
-
-// 전처리된 데이터 가져오기
-const preprocessed = route.preprocessed;
-
-const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
 
 const requestConfigParam = {
     name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
@@ -22,7 +29,11 @@ const requestConfigParam = {
     defaultValue: "{}",
 }
 
-const argToTmpl = ({ name, optional, type, defaultValue }) => `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
+// ============================================================================
+// 함수 인자 생성
+// ============================================================================
+const argToTmpl = ({ name, optional, type, defaultValue }) =>
+  `${name}${!defaultValue && optional ? '?' : ''}: ${type}${defaultValue ? ` = ${defaultValue}` : ''}`;
 
 const rawWrapperArgs = config.extractRequestParams ?
     _.compact([
@@ -43,28 +54,32 @@ const rawWrapperArgs = config.extractRequestParams ?
     ])
 
 const queryKeyProps = _.sortBy(_.compact([
-requestParams && {
-          name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
-          optional: false,
-          type: getInlineParseContent(requestParams),
-        },
-        ...(!requestParams ? pathParams : []),
-]),[o => o.optional]).map(argToTmpl)
-.join(', ')
+  requestParams && {
+    name: pathParams.length ? `{ ${_.join(pathParamsNames, ", ")}, ...${queryName} }` : queryName,
+    optional: false,
+    type: getInlineParseContent(requestParams),
+  },
+  ...(!requestParams ? pathParams : []),
+]), [o => o.optional])
+  .map(argToTmpl)
+  .join(', ')
 
-const wrapperArgs = _
-    .sortBy(rawWrapperArgs, [o => o.optional])
-    .map(argToTmpl)
-    .join(', ')
+const wrapperArgs = _.sortBy(rawWrapperArgs, [o => o.optional])
+  .map(argToTmpl)
+  .join(', ')
 
-// RequestParams["type"]
+// ============================================================================
+// 요청/응답 컨텐츠 타입
+// ============================================================================
+const isFetchTemplate = config.httpClientType === HTTP_CLIENT.FETCH;
+
 const requestContentKind = {
     "JSON": "ContentType.Json",
     "URL_ENCODED": "ContentType.UrlEncoded",
     "FORM_DATA": "ContentType.FormData",
     "TEXT": "ContentType.Text",
 }
-// RequestParams["format"]
+
 const responseContentKind = {
     "JSON": '"json"',
     "IMAGE": '"blob"',
@@ -77,6 +92,9 @@ const bodyContentKindTmpl = requestContentKind[requestBodyInfo.contentKind] || n
 const responseFormatTmpl = responseContentKind[responseBodyInfo.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind] || null;
 const securityTmpl = security ? 'true' : null;
 
+// ============================================================================
+// 반환 타입 정의
+// ============================================================================
 const describeReturnType = () => {
     if (!config.toJS) return "";
 
@@ -91,8 +109,11 @@ const describeReturnType = () => {
 }
 %>
 
-
-
+<%
+// ============================================================================
+// JSDoc 생성
+// ============================================================================
+%>
 /**
 <%~ routeDocs.description %>
 
@@ -102,28 +123,41 @@ const describeReturnType = () => {
 
 */
 
+<%
+// ============================================================================
+// Query Key 함수 생성 (GET 메서드인 경우)
+// ============================================================================
+%>
 <% if(preprocessed.isGetMethod){%>
-<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~preprocessed.queryKey %>,<% if (queryTmpl) { %>query,<% } %>]
-<% } %>
 
+<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~preprocessed.queryKey %>,<% if (queryTmpl) { %>query,<% } %>]
+
+<% } else { %>
+
+<% } %>
+<%
+// ============================================================================
+// API 메서드 생성
+// ============================================================================
+%>
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${describeReturnType()}` : "" %> => {
 <% if (payload && config.applyZodSchemaInAPI && preprocessed.payloadSchemaName) { %>
-<%= preprocessed.payloadSchemaName %>.parse(data);
+  <%= preprocessed.payloadSchemaName %>.parse(data);
 <% } %>
-const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
-  path: `<%~ path %>`,
-  method: '<%~ _.upperCase(method) %>',
-  <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
-  <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
-  <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
-  <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
-  <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
-  ...<%~ _.get(requestConfigParam, "name") %>,
+  const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
+    path: `<%~ path %>`,
+    method: '<%~ _.upperCase(method) %>',
+    <%~ queryTmpl ? `query: ${queryTmpl},` : '' %>
+    <%~ bodyTmpl ? `body: ${bodyTmpl},` : '' %>
+    <%~ securityTmpl ? `secure: ${securityTmpl},` : '' %>
+    <%~ bodyContentKindTmpl ? `type: ${bodyContentKindTmpl},` : '' %>
+    <%~ responseFormatTmpl ? `format: ${responseFormatTmpl},` : '' %>
+    ...<%~ _.get(requestConfigParam, "name") %>,
   })
 
-  <% if (config.applyZodSchemaInAPI && !preprocessed.isPrimitiveResponseType && preprocessed.responseSchemaName) { %>
+<% if (config.applyZodSchemaInAPI && !preprocessed.isPrimitiveResponseType && preprocessed.responseSchemaName) { %>
   <%= preprocessed.responseSchemaName %>.parse(response.data);
-  <% } %>
+<% } %>
 
   return response;
-  };
+};

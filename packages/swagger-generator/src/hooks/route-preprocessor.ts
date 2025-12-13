@@ -2,6 +2,8 @@
  * onCreateRoute 훅에서 사용할 route 전처리 로직
  */
 
+import type { ParsedRoute } from 'swagger-typescript-api';
+
 import { buildQueryKey, getSchemaName, isGetMethod, isPrimitiveType } from '../helpers/template-helpers';
 
 interface RouteRequest {
@@ -31,7 +33,7 @@ interface RouteData {
 /**
  * Route 데이터를 전처리하여 preprocessed 속성 추가
  */
-export const preprocessRoute = (routeData: any): any => {
+export const preprocessRoute = (routeData: ParsedRoute): ParsedRoute => {
   const { request, response } = routeData as RouteData;
   const method = request?.method || '';
   const path = request?.path || '';
@@ -39,7 +41,7 @@ export const preprocessRoute = (routeData: any): any => {
   const type = response?.type || '';
 
   // 각 route에 전처리된 데이터 추가
-  (routeData as any).preprocessed = {
+  routeData.preprocessed = {
     isGetMethod: isGetMethod(method),
     queryKey: buildQueryKey(path),
     payloadSchemaName: payload ? getSchemaName(payload.type) : null,

@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "lib",
     "emitDeclarationOnly": false,
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
   },
   "include": ["src", "tests"],
   "exclude": ["node_modules", "dist", "bin"]

@@ -1,33 +1,63 @@
 <%
-const { utils, route, config, modelTypes, apiHelpers } = it;
-const { _, pascalCase } = utils;
-const apiClassName = pascalCase(route.moduleName);
+// ============================================================================
+// 데이터 준비
+// ============================================================================
+const { utils, route, config, modelTypes, apiHelpers, commonHelpers } = it;
+const { getSchemaNames } = apiHelpers
+const {toPascalCase} = commonHelpers
+const { _ } = utils;
+
+// API 클래스 정보
+const apiClassName = toPascalCase(route.moduleName);
 const routes = route.routes;
+
+// 타입 정보
 const dataContracts = _.map(modelTypes, "name");
-const schemaNames = apiHelpers.getSchemaNames(dataContracts);
+const schemaNames = getSchemaNames(dataContracts);
+const hasDataContracts = dataContracts.length > 0;
+
+// HTTP 클라이언트 타입
+const isAxiosClient = config.httpClientType === config.constants.HTTP_CLIENT.AXIOS;
+const isSingleHttpClient = config.singleHttpClient;
 %>
+<%
+// ============================================================================
+// Import 구문
+// ============================================================================
+%>
+<% if (isAxiosClient) { %>
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
+<% } %>
 
-<% if (config.httpClientType === config.constants.HTTP_CLIENT.AXIOS) { %> import type { AxiosRequestConfig, AxiosResponse } from "axios"; <% } %>
-
+<% if (hasDataContracts) { %>
+import { <%~ dataContracts.join(", ") %> } from "./<%~ config.fileNames.dataContracts %>";
+<% } %>
 import { HttpClient, RequestParams, ContentType, HttpResponse } from "./<%~ config.fileNames.httpClient %>";
-<% if (dataContracts.length) { %>
-import { <%~ dataContracts.join(", ") %> } from "./<%~ config.fileNames.dataContracts %>"
+
+<% if (hasDataContracts) { %>
+import { <%~ schemaNames.join(", ") %> } from "./schema";
 <% } %>
 
-<% if (dataContracts.length) {%>
-import { <%~ schemaNames.join(", ") %> } from "./schema"
+<%
+// ============================================================================
+// API 클래스 정의
+// ============================================================================
+%>
+export class <%= apiClassName %><SecurityDataType = unknown><% if (!isSingleHttpClient) { %> extends HttpClient<SecurityDataType><% } %> {
+<% if (isSingleHttpClient) { %>
+  http: HttpClient<SecurityDataType>;
+
+  constructor(http: HttpClient<SecurityDataType>) {
+    this.http = http;
+  }
 <% } %>
 
-export class <%= apiClassName %><SecurityDataType=unknown><% if (!config.singleHttpClient) { %> extends HttpClient<SecurityDataType> <% } %> {
-    <% if(config.singleHttpClient) { %>
-    http: HttpClient<SecurityDataType>;
-
-      constructor (http: HttpClient<SecurityDataType>) {
-        this.http = http;
-        }
-        <% } %>
-
-        <% for (const route of routes) { %>
-        <%~ includeFile('./procedure-call.ejs', { ...it, route }) %>
-        <% } %>
-        }
+<%
+// ============================================================================
+// API 메서드들
+// ============================================================================
+%>
+<% for (const route of routes) { %>
+  <%~ includeFile('./procedure-call.ejs', { ...it, route }) %>
+<% } %>
+}
