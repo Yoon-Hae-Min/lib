@@ -11,7 +11,13 @@ interface RouteRequest {
   path?: string;
   payload?: {
     type: string;
+    name?: string;
   };
+  parameters?: any;
+  query?: {
+    name?: string;
+  };
+  security?: any;
 }
 
 interface RouteResponse {
@@ -27,6 +33,14 @@ interface RouteData {
     payloadSchemaName: string | null;
     responseSchemaName: string | null;
     isPrimitiveResponseType: boolean;
+    procedure: {
+      queryName: string;
+      pathParams: Array<any>;
+      payloadName: string | null;
+      queryExists: boolean;
+      securityExists: boolean;
+    };
+    api: Record<string, never>;
   };
 }
 
@@ -39,14 +53,29 @@ export const preprocessRoute = (routeData: ParsedRoute): ParsedRoute => {
   const path = request?.path || '';
   const payload = request?.payload;
   const type = response?.type || '';
+  const parameters = request?.parameters;
+  const query = request?.query;
 
   // 각 route에 전처리된 데이터 추가
   routeData.preprocessed = {
+    // Common fields (used across templates)
     isGetMethod: isGetMethod(method),
     queryKey: buildQueryKey(path),
     payloadSchemaName: payload ? getSchemaName(payload.type) : null,
     responseSchemaName: type ? getSchemaName(type) : null,
     isPrimitiveResponseType: isPrimitiveType(type),
+
+    // procedure-call.ejs specific data
+    procedure: {
+      queryName: (query && query.name) || 'query',
+      pathParams: parameters ? Object.values(parameters) : [],
+      payloadName: payload?.name || null,
+      queryExists: query != null,
+      securityExists: !!request?.security,
+    },
+
+    // api.ejs specific data (reserved for future use)
+    api: {},
   };
 
   return routeData;

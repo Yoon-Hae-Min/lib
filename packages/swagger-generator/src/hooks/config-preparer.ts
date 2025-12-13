@@ -2,6 +2,7 @@
  * onPrepareConfig 훅에서 사용할 설정 전처리 로직
  */
 
+import * as procedureHelpersModule from '../helpers/procedure-helpers';
 import * as templateHelpers from '../helpers/template-helpers';
 
 /**
@@ -15,7 +16,11 @@ const apiHelpers = {
  * Procedure 템플릿에서 사용할 헬퍼 함수들
  */
 const procedureHelpers = {
-  // 현재는 사용하지 않지만, 향후 필요시 추가 가능
+  buildWrapperArgs: procedureHelpersModule.buildWrapperArgs,
+  buildQueryKeyProps: procedureHelpersModule.buildQueryKeyProps,
+  buildContentTypeVariables: procedureHelpersModule.buildContentTypeVariables,
+  buildReturnType: procedureHelpersModule.buildReturnType,
+  buildRequestConfigParam: procedureHelpersModule.buildRequestConfigParam,
 };
 
 /**
