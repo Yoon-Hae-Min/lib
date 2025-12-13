@@ -21,12 +21,12 @@ const capitalizeAfterDelimiter = (str: string) => str.replace(/[^a-zA-Z0-9]+(.)/
 /**
  * 첫 글자를 소문자로 변환
  */
-const lowercaseFirst = (str: string) => str.replace(/^[A-Z]/, firstLetter => firstLetter.toLowerCase());
+const lowercaseFirst = (str: string) => str.replace(/^[A-Z]/, (firstLetter) => firstLetter.toLowerCase());
 
 /**
  * 첫 글자를 대문자로 변환
  */
-const uppercaseFirst = (str: string) => str.replace(/^[a-z]/, firstLetter => firstLetter.toUpperCase());
+const uppercaseFirst = (str: string) => str.replace(/^[a-z]/, (firstLetter) => firstLetter.toUpperCase());
 
 /**
  * QueryKey를 생성합니다.
@@ -35,8 +35,8 @@ const uppercaseFirst = (str: string) => str.replace(/^[a-z]/, firstLetter => fir
 export const buildQueryKey = (path: string) => {
   const pathArr = path.split('/');
   return pathArr
-    .filter(v => v)
-    .map(v => {
+    .filter((v) => v)
+    .map((v) => {
       if (v.match(TemplateLiteralRegex)) {
         return removeTemplateLiteral(v);
       } else {
@@ -88,5 +88,5 @@ export const isPrimitiveType = (type: string) => {
  * Schema 이름 배열 생성
  */
 export const getSchemaNames = (dataContracts: string[]) => {
-  return dataContracts.map(v => getSchemaName(v));
+  return dataContracts.map((v) => getSchemaName(v));
 };
