@@ -90,5 +90,17 @@ describe('runSwagger - applyZodSchemaInAPI', () => {
 
       expect(petsContent).toMatchSnapshot();
     });
+
+    it('생성된 data-contracts.ts 파일은 스냅샷과 일치해야 한다', () => {
+      const dataContractsContent = fs.readFileSync(path.join(outputDir, 'data-contracts.ts'), 'utf-8');
+
+      expect(dataContractsContent).toMatchSnapshot();
+    });
+
+    it('생성된 http-client.ts 파일은 스냅샷과 일치해야 한다', () => {
+      const httpClientContent = fs.readFileSync(path.join(outputDir, 'http-client.ts'), 'utf-8');
+
+      expect(httpClientContent).toMatchSnapshot();
+    });
   });
 });
