@@ -3,6 +3,7 @@
   "version": "0.0.4",
   "description": "",
   "keywords": [],
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/Yoon-Hae-Min/lib",
