@@ -9,7 +9,6 @@ import type { GenerateApiParams } from 'swagger-typescript-api';
 import { generateApi } from 'swagger-typescript-api';
 
 import { prepareConfig } from './hooks/config-preparer';
-import { preprocessRoute } from './hooks/route-preprocessor';
 
 interface RunSwaggerOptions {
   id?: string;
@@ -65,7 +64,6 @@ export const runSwagger = async ({ id, input, password, output, url, applyZodSch
     },
     applyZodSchemaInAPI: applyZodSchemaInAPI,
     hooks: {
-      onCreateRoute: preprocessRoute,
       onPrepareConfig: prepareConfig,
     },
   } as GenerateApiParams);

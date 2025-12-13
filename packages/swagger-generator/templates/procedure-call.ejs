@@ -2,9 +2,9 @@
 // ============================================================================
 // 데이터 준비
 // ============================================================================
-const { utils, route, config, procedureHelpers } = it;
+const { utils, route, config, procedureHelpers,commonHelpers } = it;
 const { preprocessed } = route;
-const { path, method } = route.request;
+const { path, method, payload } = route.request;
 const { type, errorType } = route.response;
 const { _ } = utils;
 
@@ -14,7 +14,7 @@ const routeDocs = includeFile("@base/route-docs", { config, route, utils });
 // Helper 함수를 통해 모든 값 계산
 const requestConfigParam = procedureHelpers.buildRequestConfigParam(route, config);
 const wrapperArgs = procedureHelpers.buildWrapperArgs(route, config, utils, requestConfigParam);
-const queryKeyProps = procedureHelpers.buildQueryKeyProps(route, config, utils);
+const queryKeyProps = procedureHelpers.buildQueryKeyProps(route, utils);
 const contentVars = procedureHelpers.buildContentTypeVariables(route, config);
 const returnType = procedureHelpers.buildReturnType(route, config);
 %>
@@ -28,16 +28,16 @@ const returnType = procedureHelpers.buildReturnType(route, config);
 
 */
 
-<% if(preprocessed.isGetMethod){%>
+<% if(commonHelpers.isGetMethod(method)){%>
 
-<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~preprocessed.queryKey %>,<% if (contentVars.queryTmpl) { %><%~ contentVars.queryTmpl %>,<% } %>]
+<%~ route.routeName.usage %>Key = (<%~ queryKeyProps %>) => [<%- ~commonHelpers.buildQueryKey(path) %>,<% if (contentVars.queryTmpl) { %><%~ contentVars.queryTmpl %>,<% } %>]
 
 <% } else { %>
 
 <% } %>
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${returnType}` : "" %> => {
-<% if (preprocessed.payloadSchemaName) { %>
-  <%= preprocessed.payloadSchemaName %>.parse(data);
+<% if (payload?.type) { %>
+  <%= commonHelpers.getSchemaName(payload.type) %>.parse(data);
 <% } %>
   const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
     path: `<%~ path %>`,
@@ -50,8 +50,8 @@ const returnType = procedureHelpers.buildReturnType(route, config);
     ...<%~ requestConfigParam.name %>,
   })
 
-<% if (preprocessed.responseSchemaName) { %>
-  <%= preprocessed.responseSchemaName %>.parse(response.data);
+<% if (commonHelpers.getSchemaName(type)) { %>
+  <%= commonHelpers.getSchemaName(type) %>.parse(response.data);
 <% } %>
 
   return response;

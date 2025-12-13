@@ -3,6 +3,8 @@
  * 템플릿 내 복잡한 계산 로직을 외부로 분리
  */
 
+import type { GenerateApiConfiguration, ParsedRoute, SchemaComponent } from 'swagger-typescript-api';
+
 interface RequestConfigParam {
   name: string;
   optional: boolean;
@@ -28,20 +30,25 @@ const argToTmpl = ({ name, optional, type, defaultValue }: any): string => {
 /**
  * 함수의 wrapper arguments를 생성
  */
-export const buildWrapperArgs = (route: any, config: any, utils: any, requestConfigParam: RequestConfigParam): string => {
+export const buildWrapperArgs = (
+  route: ParsedRoute,
+  config: GenerateApiConfiguration['config'],
+  utils: GenerateApiConfiguration['utils'],
+  requestConfigParam: RequestConfigParam,
+): string => {
   const { _, getInlineParseContent } = utils;
   const { parameters, query, payload, requestParams } = route.request;
 
   const pathParams = _.values(parameters);
   const pathParamsNames = _.map(pathParams, 'name');
-  const queryName = (query && query.name) || 'query';
+  const queryName = ((query && query.name) || 'query') as string;
 
   const rawWrapperArgs = config.extractRequestParams
     ? _.compact([
         requestParams && {
           name: pathParams.length ? `{ ${_.join(pathParamsNames, ', ')}, ...${queryName} }` : queryName,
           optional: false,
-          type: getInlineParseContent(requestParams),
+          type: getInlineParseContent(requestParams as SchemaComponent['rawTypeData']),
         },
         ...(!requestParams ? pathParams : []),
         payload,
@@ -57,25 +64,25 @@ export const buildWrapperArgs = (route: any, config: any, utils: any, requestCon
 /**
  * Query key 함수의 파라미터를 생성
  */
-export const buildQueryKeyProps = (route: any, config: any, utils: any): string => {
+export const buildQueryKeyProps = (route: ParsedRoute, utils: GenerateApiConfiguration['utils']): string => {
   const { _, getInlineParseContent } = utils;
   const { parameters, requestParams } = route.request;
   const { query } = route.request;
 
   const pathParams = _.values(parameters);
   const pathParamsNames = _.map(pathParams, 'name');
-  const queryName = (query && query.name) || 'query';
+  const queryName = ((query && query.name) || 'query') as string;
 
   const queryKeyProps = _.sortBy(
     _.compact([
       requestParams && {
         name: pathParams.length ? `{ ${_.join(pathParamsNames, ', ')}, ...${queryName} }` : queryName,
         optional: false,
-        type: getInlineParseContent(requestParams),
+        type: getInlineParseContent(requestParams as SchemaComponent['rawTypeData']),
       },
       ...(!requestParams ? pathParams : []),
     ]),
-    [(o: any) => o.optional]
+    [(o: any) => o.optional],
   )
     .map(argToTmpl)
     .join(', ');
@@ -86,7 +93,10 @@ export const buildQueryKeyProps = (route: any, config: any, utils: any): string 
 /**
  * Content type 관련 변수들을 생성
  */
-export const buildContentTypeVariables = (route: any, config: any): ContentTypeVariables => {
+export const buildContentTypeVariables = (
+  route: ParsedRoute,
+  config: GenerateApiConfiguration['config'],
+): ContentTypeVariables => {
   const { requestBodyInfo, responseBodyInfo } = route;
   const { payload, query, security } = route.request;
   const { HTTP_CLIENT } = config.constants;
@@ -106,16 +116,16 @@ export const buildContentTypeVariables = (route: any, config: any): ContentTypeV
     FORM_DATA: isFetchTemplate ? '"formData"' : '"document"',
   };
 
-  const queryName = (query && query.name) || 'query';
+  const queryName = ((query && query.name) || 'query') as string;
 
   return {
     bodyTmpl: payload?.name || null,
     queryTmpl: query != null ? queryName : null,
-    bodyContentKindTmpl: requestContentKind[requestBodyInfo.contentKind] || null,
+    bodyContentKindTmpl: requestBodyInfo?.contentKind ? requestContentKind[requestBodyInfo.contentKind] || null : null,
     responseFormatTmpl:
-      responseContentKind[
-        responseBodyInfo.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind
-      ] || null,
+      responseBodyInfo?.success && responseBodyInfo.success.schema && responseBodyInfo.success.schema.contentKind
+        ? responseContentKind[responseBodyInfo.success.schema.contentKind] || null
+        : null,
     securityTmpl: security ? 'true' : null,
   };
 };
@@ -123,7 +133,7 @@ export const buildContentTypeVariables = (route: any, config: any): ContentTypeV
 /**
  * 함수의 return type을 생성
  */
-export const buildReturnType = (route: any, config: any): string => {
+export const buildReturnType = (route: ParsedRoute, config: GenerateApiConfiguration['config']): string => {
   const { type, errorType } = route.response;
   const { HTTP_CLIENT } = config.constants;
 
@@ -140,12 +150,15 @@ export const buildReturnType = (route: any, config: any): string => {
 /**
  * Request config 파라미터를 생성
  */
-export const buildRequestConfigParam = (route: any, config: any): RequestConfigParam => {
+export const buildRequestConfigParam = (
+  route: ParsedRoute,
+  config: GenerateApiConfiguration['config'],
+): RequestConfigParam => {
   const { specificArgNameResolver } = route;
   const { RESERVED_REQ_PARAMS_ARG_NAMES } = config.constants;
 
   return {
-    name: specificArgNameResolver.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
+    name: specificArgNameResolver?.resolve(RESERVED_REQ_PARAMS_ARG_NAMES),
     optional: true,
     type: 'RequestParams',
     defaultValue: '{}',
