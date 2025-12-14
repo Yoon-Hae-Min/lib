@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/use-file-upload
 
+## 1.1.3
+
+### Patch Changes
+
+- 0653546: chore(packages): 패키지 메타데이터 개선 및 일관성 정리
+
 ## 1.1.2
 
 ### Patch Changes

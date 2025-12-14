@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/view-tracker
 
+## 0.0.6
+
+### Patch Changes
+
+- 0653546: chore(packages): 패키지 메타데이터 개선 및 일관성 정리
+
 ## 0.0.5
 
 ### Patch Changes

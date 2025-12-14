@@ -1,6 +1,6 @@
 {
   "name": "@yoonhaemin-lib/swagger-generator",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Generate TypeScript API clients and Zod schemas from Swagger/OpenAPI specifications with TanStack Query support",
   "keywords": [],
   "type": "module",

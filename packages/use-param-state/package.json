@@ -1,6 +1,6 @@
 {
   "name": "@yoonhaemin-lib/use-param-state",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Manage URL query parameters as React state with react-router-dom, supporting nested objects and synchronization",
   "keywords": [],
   "repository": {
