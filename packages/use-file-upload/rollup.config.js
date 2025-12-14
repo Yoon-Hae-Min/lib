@@ -30,7 +30,7 @@ module.exports = [
     external: ["react", "react-dom"],
   },
   {
-    input: "types/index.d.ts",
+    input: "src/index.ts",
     output: {
       file: "./dist/index.d.ts",
       format: "es",

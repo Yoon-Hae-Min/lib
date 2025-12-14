@@ -30,7 +30,7 @@ export default [
     external: [/node_modules/],
   },
   {
-    input: 'types/index.d.ts',
+    input: 'src/index.ts',
     output: {
       file: './lib/index.d.ts',
       format: 'es',
