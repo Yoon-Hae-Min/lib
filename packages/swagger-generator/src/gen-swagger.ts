@@ -50,6 +50,7 @@ export const runSwagger = async ({ id, input, password, output, url, applyZodSch
     defaultResponseAsSuccess: true,
     extractRequestParams: true,
     extractRequestBody: true,
+    extractResponseBody: true,
     extractEnums: false,
     modular: true,
     moduleNameFirstTag: true,

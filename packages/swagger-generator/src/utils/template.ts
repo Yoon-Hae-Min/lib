@@ -46,13 +46,60 @@ export const buildQueryKey = (path: string) => {
 };
 
 /**
- * Schema 이름을 camelCase로 생성
- * @example "UserDto" => "userDtoSchema"
+ * 타입 이름에서 배열 표시 제거하고 기본 타입만 추출
+ * @example "(Pet)[]" => "Pet"
+ * @example "Pet[]" => "Pet"
+ * @example "Pet" => "Pet"
  */
-export const getSchemaName = (typeName: string) => {
-  return toCamelCase(typeName) + 'Schema';
+const cleanArrayType = (typeName: string): string => {
+  return typeName.replace(/^\(([^)]+)\)\[\]$/, '$1').replace(/\[\]$/, '');
 };
 
+/**
+ * 배열 타입인지 확인
+ * @example "Pet[]" => true
+ * @example "(Pet)[]" => true
+ * @example "Pet" => false
+ */
+const isArrayType = (typeName: string): boolean => {
+  return /\[\]$/.test(typeName);
+};
+
+/**
+ * Schema 이름을 camelCase로 생성
+ * @example "UserDto" => "userDtoSchema"
+ * @example "Pet" => "petSchema"
+ * @example "void" => ""
+ */
+export const getSchemaName = (typeName: string) => {
+  const cleanType = cleanArrayType(typeName);
+
+  // primitive 타입은 스키마가 없으므로 빈 문자열 반환
+  if (isPrimitiveType(cleanType)) {
+    return '';
+  }
+
+  return toCamelCase(cleanType) + 'Schema';
+};
+
+/**
+ * Zod validation 표현식 생성
+ * @example "UserDto" => "userDtoSchema"
+ * @example "(Pet)[]" => "z.array(petSchema)"
+ * @example "Pet[]" => "z.array(petSchema)"
+ * @example "void" => ""
+ */
+export const getSchemaValidation = (typeName: string) => {
+  const schemaName = getSchemaName(typeName);
+
+  // 스키마가 없으면 빈 문자열 반환
+  if (!schemaName) {
+    return '';
+  }
+
+  // 배열이면 z.array()로 감싸기
+  return isArrayType(typeName) ? `z.array(${schemaName})` : schemaName;
+};
 /**
  * 템플릿 리터럴을 제거하고 camelCase로 변환
  * @example "user-name" => "userName"
