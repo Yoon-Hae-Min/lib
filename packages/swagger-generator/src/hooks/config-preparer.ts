@@ -39,8 +39,12 @@ const commonHelpers = {
  * Configuration에 헬퍼 함수들을 추가
  */
 export const prepareConfig = (currentConfiguration: any): any => {
+  // applyZodSchemaInAPI 옵션을 config에 추가하여 템플릿에서 사용 가능하도록 함
+  const applyZodSchemaInAPI = currentConfiguration.applyZodSchemaInAPI ?? true;
+
   return {
     ...currentConfiguration,
+    applyZodSchemaInAPI,
     apiHelpers,
     procedureHelpers,
     commonHelpers,
