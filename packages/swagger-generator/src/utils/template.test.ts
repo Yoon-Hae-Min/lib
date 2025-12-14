@@ -105,6 +105,18 @@ describe('template-helpers', () => {
     it('단순한 타입 이름을 처리해야 한다', () => {
       expect(getSchemaName('User')).toBe('userSchema');
     });
+
+    it('Response 타입 별칭을 처리해야 한다', () => {
+      expect(getSchemaName('FindPetsByStatusData')).toBe('findPetsByStatusDataSchema');
+      expect(getSchemaName('GetPetByIdData')).toBe('getPetByIdDataSchema');
+    });
+
+    it('primitive 타입은 빈 문자열을 반환해야 한다', () => {
+      expect(getSchemaName('void')).toBe('');
+      expect(getSchemaName('string')).toBe('');
+      expect(getSchemaName('number')).toBe('');
+      expect(getSchemaName('any')).toBe('');
+    });
   });
 
   describe('getSchemaNames', () => {

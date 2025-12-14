@@ -36,7 +36,7 @@ const returnType = procedureHelpers.buildReturnType(route, config);
 
 <% } %>
 <%~ route.routeName.usage %> = async (<%~ wrapperArgs %>)<%~ config.toJS ? `: ${returnType}` : "" %> => {
-<% if (payload?.type) { %>
+<% if (config.applyZodSchemaInAPI && payload?.type && commonHelpers.getSchemaName(payload.type)) { %>
   <%= commonHelpers.getSchemaName(payload.type) %>.parse(data);
 <% } %>
   const response = await <%~ config.singleHttpClient ? 'this.http.request' : 'this.request' %><<%~ type %>, <%~ errorType %>>({
@@ -50,7 +50,7 @@ const returnType = procedureHelpers.buildReturnType(route, config);
     ...<%~ requestConfigParam.name %>,
   })
 
-<% if (commonHelpers.getSchemaName(type)) { %>
+<% if (config.applyZodSchemaInAPI && commonHelpers.getSchemaName(type)) { %>
   <%= commonHelpers.getSchemaName(type) %>.parse(response.data);
 <% } %>
 

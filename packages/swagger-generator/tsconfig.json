@@ -1,12 +1,11 @@
 {
   "extends": "@yoonhaemin-lib/typescript-config/react-library.json",
   "compilerOptions": {
-    "outDir": "lib",
-    "emitDeclarationOnly": false,
+    "declarationDir": "./types",
     "types": ["jest", "node"],
     "module": "ESNext",
     "moduleResolution": "Bundler"
   },
-  "include": ["src", "tests"],
-  "exclude": ["node_modules", "dist", "bin"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "bin", "lib"]
 }

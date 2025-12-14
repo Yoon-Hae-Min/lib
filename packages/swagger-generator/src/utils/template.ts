@@ -48,11 +48,17 @@ export const buildQueryKey = (path: string) => {
 /**
  * Schema 이름을 camelCase로 생성
  * @example "UserDto" => "userDtoSchema"
+ * @example "FindPetsByStatusData" => "findPetsByStatusDataSchema"
+ * @example "void" => ""
  */
 export const getSchemaName = (typeName: string) => {
+  // primitive 타입은 스키마가 없으므로 빈 문자열 반환
+  if (isPrimitiveType(typeName)) {
+    return '';
+  }
+
   return toCamelCase(typeName) + 'Schema';
 };
-
 /**
  * 템플릿 리터럴을 제거하고 camelCase로 변환
  * @example "user-name" => "userName"
@@ -80,7 +86,7 @@ export const isGetMethod = (method: string) => method === 'get';
  * 기본 타입(primitive type)인지 확인
  */
 export const isPrimitiveType = (type: string) => {
-  const primitiveTypes = ['boolean', 'number', 'string', 'symbol', 'void', 'undefined', 'null'];
+  const primitiveTypes = ['boolean', 'number', 'string', 'symbol', 'void', 'undefined', 'null', 'any'];
   return primitiveTypes.includes(type);
 };
 

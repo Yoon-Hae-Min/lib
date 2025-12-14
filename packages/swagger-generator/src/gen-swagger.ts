@@ -16,7 +16,7 @@ interface RunSwaggerOptions {
   output: string;
   url?: string;
   input?: string;
-  applyZodSchemaInAPI: boolean;
+  applyZodSchemaInAPI?: boolean;
 }
 
 const prettierConfig = {
@@ -34,7 +34,14 @@ const prettierConfig = {
   parser: 'typescript',
 } as const;
 
-export const runSwagger = async ({ id, input, password, output, url, applyZodSchemaInAPI }: RunSwaggerOptions) => {
+export const runSwagger = async ({
+  id,
+  input,
+  password,
+  output,
+  url,
+  applyZodSchemaInAPI = true,
+}: RunSwaggerOptions) => {
   const outputPath = path.resolve(process.cwd(), output);
 
   // Generate API files
@@ -50,6 +57,7 @@ export const runSwagger = async ({ id, input, password, output, url, applyZodSch
     defaultResponseAsSuccess: true,
     extractRequestParams: true,
     extractRequestBody: true,
+    extractResponseBody: true,
     extractEnums: false,
     modular: true,
     moduleNameFirstTag: true,

@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-const yargs = require('yargs');
-const { hideBin } = require('yargs/helpers');
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
-const { runZod } = require('../lib/index');
-const { runSwagger } = require('../lib/index');
+import { runZod, runSwagger } from '../lib/index.js';
 
 async function main() {
   const argv = await yargs(hideBin(process.argv))
@@ -49,15 +48,16 @@ async function main() {
     password: argv.password,
     url: argv.url,
     output: argv.output,
-    applyZodSchemaInAPI: argv.applyZodSchemaInAPI,
+    applyZodSchemaInAPI: argv.skipZodGeneration ? false : argv.applyZodSchemaInAPI,
   });
 
-  !argv.skipZodGeneration &&
-    runZod({
+  if (!argv.skipZodGeneration) {
+    await runZod({
       input: argv.output,
       output: argv.output,
       skipValidation: argv.skipValidation,
     });
+  }
 }
 
 main();
