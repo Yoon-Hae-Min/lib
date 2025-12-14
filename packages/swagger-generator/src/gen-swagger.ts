@@ -34,7 +34,14 @@ const prettierConfig = {
   parser: 'typescript',
 } as const;
 
-export const runSwagger = async ({ id, input, password, output, url, applyZodSchemaInAPI = true }: RunSwaggerOptions) => {
+export const runSwagger = async ({
+  id,
+  input,
+  password,
+  output,
+  url,
+  applyZodSchemaInAPI = true,
+}: RunSwaggerOptions) => {
   const outputPath = path.resolve(process.cwd(), output);
 
   // Generate API files

@@ -10,7 +10,6 @@ interface RunZodProps {
 
 export const runZod = ({ input, output, skipValidation }: RunZodProps): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // 상대 경로로 변환 (ts-to-zod는 상대 경로를 선호함)
     const cwd = process.cwd();
     const inputPath = path.relative(cwd, path.join(input, 'data-contracts.ts'));
     const outputPath = path.relative(cwd, path.join(output, 'schema.ts'));
