@@ -48,7 +48,7 @@ async function main() {
     password: argv.password,
     url: argv.url,
     output: argv.output,
-    applyZodSchemaInAPI: argv.applyZodSchemaInAPI,
+    applyZodSchemaInAPI: argv.skipZodGeneration ? false : argv.applyZodSchemaInAPI,
   });
 
   if (!argv.skipZodGeneration) {
