@@ -33,7 +33,6 @@ const commonHelpers = {
   isGetMethod: templateUtils.isGetMethod,
   isPrimitiveType: templateUtils.isPrimitiveType,
   getSchemaName: templateUtils.getSchemaName,
-  getSchemaValidation: templateUtils.getSchemaValidation,
 };
 
 /**

@@ -50,8 +50,8 @@ const returnType = procedureHelpers.buildReturnType(route, config);
     ...<%~ requestConfigParam.name %>,
   })
 
-<% if (commonHelpers.getSchemaValidation(type)) { %>
-  <%= commonHelpers.getSchemaValidation(type) %>.parse(response.data);
+<% if (commonHelpers.getSchemaName(type)) { %>
+  <%= commonHelpers.getSchemaName(type) %>.parse(response.data);
 <% } %>
 
   return response;

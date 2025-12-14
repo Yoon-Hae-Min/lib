@@ -35,7 +35,6 @@ import { <%~ dataContracts.join(", ") %> } from "./<%~ config.fileNames.dataCont
 import { HttpClient, RequestParams, ContentType, HttpResponse } from "./<%~ config.fileNames.httpClient %>";
 
 <% if (hasDataContracts) { %>
-import { z } from "zod";
 import { <%~ schemaNames.join(", ") %> } from "./schema";
 <% } %>
 

@@ -1,7 +1,6 @@
 import {
   buildQueryKey,
   getSchemaName,
-  getSchemaValidation,
   toCamelCase,
   toPascalCase,
   isGetMethod,
@@ -107,42 +106,16 @@ describe('template-helpers', () => {
       expect(getSchemaName('User')).toBe('userSchema');
     });
 
-    it('배열 타입도 기본 타입의 schema 이름을 반환해야 한다', () => {
-      expect(getSchemaName('Pet[]')).toBe('petSchema');
-      expect(getSchemaName('(Pet)[]')).toBe('petSchema');
+    it('Response 타입 별칭을 처리해야 한다', () => {
+      expect(getSchemaName('FindPetsByStatusData')).toBe('findPetsByStatusDataSchema');
+      expect(getSchemaName('GetPetByIdData')).toBe('getPetByIdDataSchema');
     });
 
     it('primitive 타입은 빈 문자열을 반환해야 한다', () => {
       expect(getSchemaName('void')).toBe('');
       expect(getSchemaName('string')).toBe('');
       expect(getSchemaName('number')).toBe('');
-      expect(getSchemaName('string[]')).toBe('');
-      expect(getSchemaName('void[]')).toBe('');
-    });
-  });
-
-  describe('getSchemaValidation', () => {
-    it('단일 타입은 schema 이름을 반환해야 한다', () => {
-      expect(getSchemaValidation('UserDto')).toBe('userDtoSchema');
-      expect(getSchemaValidation('Pet')).toBe('petSchema');
-    });
-
-    it('배열 타입은 z.array()로 감싸야 한다', () => {
-      expect(getSchemaValidation('Pet[]')).toBe('z.array(petSchema)');
-      expect(getSchemaValidation('(Pet)[]')).toBe('z.array(petSchema)');
-    });
-
-    it('복잡한 타입의 배열을 처리해야 한다', () => {
-      expect(getSchemaValidation('UserDto[]')).toBe('z.array(userDtoSchema)');
-      expect(getSchemaValidation('(UserDto)[]')).toBe('z.array(userDtoSchema)');
-    });
-
-    it('primitive 타입은 빈 문자열을 반환해야 한다', () => {
-      expect(getSchemaValidation('void')).toBe('');
-      expect(getSchemaValidation('string')).toBe('');
-      expect(getSchemaValidation('number')).toBe('');
-      expect(getSchemaValidation('string[]')).toBe('');
-      expect(getSchemaValidation('void[]')).toBe('');
+      expect(getSchemaName('any')).toBe('');
     });
   });
 
