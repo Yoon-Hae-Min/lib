@@ -1,12 +1,17 @@
 # @yoonhaemin-lib/template
 
-## 2.0.2
+## 3.0.1
 
 ### Patch Changes
 
-- 0653546: chore(packages): 패키지 메타데이터 개선 및 일관성 정리
 - 7ce96d7: refactor: 내부 코드 구조 방식 변경 tsc -> rollup
   fix: 플래그가 적용 되지 않는 버그 수정
+
+## 3.0.1
+
+### Major Changes
+
+- 0653546: chore(packages): 패키지 메타데이터 개선 및 일관성 정리
 
 ## 2.0.1
 
