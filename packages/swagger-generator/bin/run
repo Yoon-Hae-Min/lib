@@ -52,12 +52,13 @@ async function main() {
     applyZodSchemaInAPI: argv.applyZodSchemaInAPI,
   });
 
-  !argv.skipZodGeneration &&
-    runZod({
+  if (!argv.skipZodGeneration) {
+    await runZod({
       input: argv.output,
       output: argv.output,
       skipValidation: argv.skipValidation,
     });
+  }
 }
 
 main();
