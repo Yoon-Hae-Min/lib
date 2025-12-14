@@ -16,7 +16,6 @@ packages/template/
 │   └── index.d.ts            # TypeScript 타입 정의
 ├── package.json              # 패키지 메타데이터 및 의존성
 ├── tsconfig.json             # TypeScript 컴파일러 설정
-├── tsconfig.lint.json        # ESLint용 TypeScript 설정
 ├── rollup.config.js          # Rollup 번들러 설정
 ├── jest.config.js            # Jest 테스트 설정
 ├── babel.config.js           # Babel 트랜스파일러 설정
@@ -88,19 +87,11 @@ export type { YourComponentProps } from './YourComponent';
    - Jest로 모든 테스트 실행
    - 테스트 실패 시 빌드 중단
 
-3. **TypeScript 컴파일** (`tsc`)
-
-   - src/ → types/ 로 타입 정의 생성
-   - 타입 에러가 있으면 빌드 실패
-
-4. **Rollup 번들링** (`rollup --config`)
+3. **Rollup 번들링** (`rollup --config`)
 
    - JavaScript 번들 생성 (CJS, ESM)
-   - 타입 정의 병합 (types/ → dist/index.d.ts)
-
-5. **정리** (`rm -rf ./types`)
-   - 임시 타입 디렉토리 삭제
-   - 최종 결과물만 dist/에 남김
+   - TypeScript 타입 정의 생성 (rollup-plugin-dts 사용)
+   - 타입 에러가 있으면 빌드 실패
 
 ### 빌드 결과물
 
