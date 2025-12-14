@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'; // [1] url 모듈 가져오기
 // [2] Jest 환경에서도 무조건 동작하는 '찐' 표준 방식
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { runSwagger } from '../src/gen-swagger';
+import { runSwagger } from '../gen-swagger';
 
 describe('runSwagger - applyZodSchemaInAPI', () => {
   const fixturesDir = path.resolve(__dirname, 'fixtures');
