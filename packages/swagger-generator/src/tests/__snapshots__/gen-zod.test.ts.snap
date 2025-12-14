@@ -37,13 +37,21 @@ export const listPetsParamsSchema = z.object({
   limit: z.number().optional(),
 });
 
+export const listPetsDataSchema = petsResponseSchema;
+
+export const createPetDataSchema = petSchema;
+
 export const getPetByIdParamsSchema = z.object({
   petId: z.string(),
 });
 
+export const getPetByIdDataSchema = petSchema;
+
 export const updatePetParamsSchema = z.object({
   petId: z.string(),
 });
+
+export const updatePetDataSchema = petSchema;
 "
 `;
 
@@ -84,12 +92,20 @@ export const listPetsParamsSchema = z.object({
   limit: z.number().optional(),
 });
 
+export const listPetsDataSchema = petsResponseSchema;
+
+export const createPetDataSchema = petSchema;
+
 export const getPetByIdParamsSchema = z.object({
   petId: z.string(),
 });
 
+export const getPetByIdDataSchema = petSchema;
+
 export const updatePetParamsSchema = z.object({
   petId: z.string(),
 });
+
+export const updatePetDataSchema = petSchema;
 "
 `;

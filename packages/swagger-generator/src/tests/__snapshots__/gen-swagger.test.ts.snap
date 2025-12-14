@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: true 생성된 Pets.ts 파일은 스냅샷과 일치해야 한다 1`] = `
+exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: false 생성된 Pets.ts 파일은 스냅샷과 일치해야 한다 1`] = `
 "/* eslint-disable */
 /* tslint:disable */
 // @ts-nocheck
@@ -14,17 +14,17 @@ exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: true 생성된 Pe
  */
 
 import {
+  CreatePetData,
   CreatePetPayload,
+  GetPetByIdData,
   GetPetByIdParams,
+  ListPetsData,
   ListPetsParams,
-  Pet,
-  PetsResponse,
+  UpdatePetData,
   UpdatePetParams,
   UpdatePetPayload,
 } from './data-contracts';
 import {ContentType, HttpClient, RequestParams} from './http-client';
-
-import {createPetPayloadSchema, petSchema, petsResponseSchema, updatePetPayloadSchema} from './schema';
 
 export class Pets<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
@@ -40,22 +40,20 @@ export class Pets<SecurityDataType = unknown> {
    * @name ListPets
    * @summary List all pets
    * @request GET:/pets
-   * @response \`200\` \`PetsResponse\` A paged array of pets
+   * @response \`200\` \`ListPetsData\` A paged array of pets
    * @response \`default\` \`Error\` unexpected error
    */
 
   listPetsKey = (query: ListPetsParams) => ['pets', query];
 
   listPets = async (query: ListPetsParams, params: RequestParams = {}) => {
-    const response = await this.http.request<PetsResponse, any>({
+    const response = await this.http.request<ListPetsData, any>({
       path: \`/pets\`,
       method: 'GET',
       query: query,
       format: 'json',
       ...params,
     });
-
-    petsResponseSchema.parse(response.data);
 
     return response;
   };
@@ -66,13 +64,12 @@ export class Pets<SecurityDataType = unknown> {
    * @name CreatePet
    * @summary Create a pet
    * @request POST:/pets
-   * @response \`201\` \`Pet\` Pet created
+   * @response \`201\` \`CreatePetData\` Pet created
    * @response \`default\` \`Error\` unexpected error
    */
 
   createPet = async (data: CreatePetPayload, params: RequestParams = {}) => {
-    createPetPayloadSchema.parse(data);
-    const response = await this.http.request<Pet, any>({
+    const response = await this.http.request<CreatePetData, any>({
       path: \`/pets\`,
       method: 'POST',
       body: data,
@@ -80,8 +77,6 @@ export class Pets<SecurityDataType = unknown> {
       format: 'json',
       ...params,
     });
-
-    petSchema.parse(response.data);
 
     return response;
   };
@@ -92,21 +87,19 @@ export class Pets<SecurityDataType = unknown> {
    * @name GetPetById
    * @summary Info for a specific pet
    * @request GET:/pets/{petId}
-   * @response \`200\` \`Pet\` Expected response to a valid request
+   * @response \`200\` \`GetPetByIdData\` Expected response to a valid request
    * @response \`default\` \`Error\` unexpected error
    */
 
   getPetByIdKey = ({petId, ...query}: GetPetByIdParams) => ['pets', petId];
 
   getPetById = async ({petId, ...query}: GetPetByIdParams, params: RequestParams = {}) => {
-    const response = await this.http.request<Pet, any>({
+    const response = await this.http.request<GetPetByIdData, any>({
       path: \`/pets/\${petId}\`,
       method: 'GET',
       format: 'json',
       ...params,
     });
-
-    petSchema.parse(response.data);
 
     return response;
   };
@@ -117,13 +110,12 @@ export class Pets<SecurityDataType = unknown> {
    * @name UpdatePet
    * @summary Update a pet
    * @request PUT:/pets/{petId}
-   * @response \`200\` \`Pet\` Pet updated
+   * @response \`200\` \`UpdatePetData\` Pet updated
    * @response \`default\` \`Error\` unexpected error
    */
 
   updatePet = async ({petId, ...query}: UpdatePetParams, data: UpdatePetPayload, params: RequestParams = {}) => {
-    updatePetPayloadSchema.parse(data);
-    const response = await this.http.request<Pet, any>({
+    const response = await this.http.request<UpdatePetData, any>({
       path: \`/pets/\${petId}\`,
       method: 'PUT',
       body: data,
@@ -132,7 +124,378 @@ export class Pets<SecurityDataType = unknown> {
       ...params,
     });
 
-    petSchema.parse(response.data);
+    return response;
+  };
+}
+"
+`;
+
+exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: false 생성된 data-contracts.ts 파일은 스냅샷과 일치해야 한다 1`] = `
+"/* eslint-disable */
+/* tslint:disable */
+// @ts-nocheck
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+
+export interface Pet {
+  id: string;
+  name: string;
+  tag?: string;
+  age?: number;
+}
+
+export interface CreatePetPayload {
+  name: string;
+  tag?: string;
+  age?: number;
+}
+
+export interface UpdatePetPayload {
+  name?: string;
+  tag?: string;
+  age?: number;
+}
+
+export interface PetsResponse {
+  items: Pet[];
+  total: number;
+}
+
+export interface Error {
+  /** @format int32 */
+  code: number;
+  message: string;
+}
+
+export interface ListPetsParams {
+  /**
+   * How many items to return at one time (max 100)
+   * @format int32
+   */
+  limit?: number;
+}
+
+export type ListPetsData = PetsResponse;
+
+export type CreatePetData = Pet;
+
+export interface GetPetByIdParams {
+  /** The id of the pet to retrieve */
+  petId: string;
+}
+
+export type GetPetByIdData = Pet;
+
+export interface UpdatePetParams {
+  /** The id of the pet to update */
+  petId: string;
+}
+
+export type UpdatePetData = Pet;
+"
+`;
+
+exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: false 생성된 http-client.ts 파일은 스냅샷과 일치해야 한다 1`] = `
+"/* eslint-disable */
+/* tslint:disable */
+// @ts-nocheck
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+
+import type {AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType} from 'axios';
+import axios from 'axios';
+
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams extends Omit<AxiosRequestConfig, 'data' | 'params' | 'url' | 'responseType'> {
+  /** set parameter to \`true\` for call \`securityWorker\` for this request */
+  secure?: boolean;
+  /** request path */
+  path: string;
+  /** content type of request body */
+  type?: ContentType;
+  /** query params */
+  query?: QueryParamsType;
+  /** format of response (i.e. response.json() -> format: "json") */
+  format?: ResponseType;
+  /** request body */
+  body?: unknown;
+}
+
+export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>;
+
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, 'data' | 'cancelToken'> {
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
+}
+
+export enum ContentType {
+  Json = 'application/json',
+  JsonApi = 'application/vnd.api+json',
+  FormData = 'multipart/form-data',
+  UrlEncoded = 'application/x-www-form-urlencoded',
+  Text = 'text/plain',
+}
+
+export class HttpClient<SecurityDataType = unknown> {
+  public instance: AxiosInstance;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
+  private secure?: boolean;
+  private format?: ResponseType;
+
+  constructor({securityWorker, secure, format, ...axiosConfig}: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({
+      ...axiosConfig,
+      baseURL: axiosConfig.baseURL || 'https://api.petstore.com/v1',
+    });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
+  }
+
+  public setSecurityData = (data: SecurityDataType | null) => {
+    this.securityData = data;
+  };
+
+  protected mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
+    const method = params1.method || (params2 && params2.method);
+
+    return {
+      ...this.instance.defaults,
+      ...params1,
+      ...(params2 || {}),
+      headers: {
+        ...((method && this.instance.defaults.headers[method.toLowerCase() as keyof HeadersDefaults]) || {}),
+        ...(params1.headers || {}),
+        ...((params2 && params2.headers) || {}),
+      },
+    };
+  }
+
+  protected stringifyFormItem(formItem: unknown) {
+    if (typeof formItem === 'object' && formItem !== null) {
+      return JSON.stringify(formItem);
+    } else {
+      return \`\${formItem}\`;
+    }
+  }
+
+  protected createFormData(input: Record<string, unknown>): FormData {
+    if (input instanceof FormData) {
+      return input;
+    }
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      const propertyContent: any[] = property instanceof Array ? property : [property];
+
+      for (const formItem of propertyContent) {
+        const isFileType = formItem instanceof Blob || formItem instanceof File;
+        formData.append(key, isFileType ? formItem : this.stringifyFormItem(formItem));
+      }
+
+      return formData;
+    }, new FormData());
+  }
+
+  public request = async <T = any, _E = any>({
+    secure,
+    path,
+    type,
+    query,
+    format,
+    body,
+    ...params
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
+    const secureParams =
+      ((typeof secure === 'boolean' ? secure : this.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
+    const requestParams = this.mergeRequestParams(params, secureParams);
+    const responseFormat = format || this.format || undefined;
+
+    if (type === ContentType.FormData && body && body !== null && typeof body === 'object') {
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    if (type === ContentType.Text && body && body !== null && typeof body !== 'string') {
+      body = JSON.stringify(body);
+    }
+
+    return this.instance.request({
+      ...requestParams,
+      headers: {
+        ...(requestParams.headers || {}),
+        ...(type ? {'Content-Type': type} : {}),
+      },
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
+    });
+  };
+}
+"
+`;
+
+exports[`runSwagger - applyZodSchemaInAPI applyZodSchemaInAPI: true 생성된 Pets.ts 파일은 스냅샷과 일치해야 한다 1`] = `
+"/* eslint-disable */
+/* tslint:disable */
+// @ts-nocheck
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+
+import {
+  CreatePetData,
+  CreatePetPayload,
+  GetPetByIdData,
+  GetPetByIdParams,
+  ListPetsData,
+  ListPetsParams,
+  UpdatePetData,
+  UpdatePetParams,
+  UpdatePetPayload,
+} from './data-contracts';
+import {ContentType, HttpClient, RequestParams} from './http-client';
+
+import {
+  createPetDataSchema,
+  createPetPayloadSchema,
+  getPetByIdDataSchema,
+  listPetsDataSchema,
+  updatePetDataSchema,
+  updatePetPayloadSchema,
+} from './schema';
+
+export class Pets<SecurityDataType = unknown> {
+  http: HttpClient<SecurityDataType>;
+
+  constructor(http: HttpClient<SecurityDataType>) {
+    this.http = http;
+  }
+
+  /**
+   * No description
+   *
+   * @tags pets
+   * @name ListPets
+   * @summary List all pets
+   * @request GET:/pets
+   * @response \`200\` \`ListPetsData\` A paged array of pets
+   * @response \`default\` \`Error\` unexpected error
+   */
+
+  listPetsKey = (query: ListPetsParams) => ['pets', query];
+
+  listPets = async (query: ListPetsParams, params: RequestParams = {}) => {
+    const response = await this.http.request<ListPetsData, any>({
+      path: \`/pets\`,
+      method: 'GET',
+      query: query,
+      format: 'json',
+      ...params,
+    });
+
+    listPetsDataSchema.parse(response.data);
+
+    return response;
+  };
+  /**
+   * No description
+   *
+   * @tags pets
+   * @name CreatePet
+   * @summary Create a pet
+   * @request POST:/pets
+   * @response \`201\` \`CreatePetData\` Pet created
+   * @response \`default\` \`Error\` unexpected error
+   */
+
+  createPet = async (data: CreatePetPayload, params: RequestParams = {}) => {
+    createPetPayloadSchema.parse(data);
+    const response = await this.http.request<CreatePetData, any>({
+      path: \`/pets\`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    });
+
+    createPetDataSchema.parse(response.data);
+
+    return response;
+  };
+  /**
+   * No description
+   *
+   * @tags pets
+   * @name GetPetById
+   * @summary Info for a specific pet
+   * @request GET:/pets/{petId}
+   * @response \`200\` \`GetPetByIdData\` Expected response to a valid request
+   * @response \`default\` \`Error\` unexpected error
+   */
+
+  getPetByIdKey = ({petId, ...query}: GetPetByIdParams) => ['pets', petId];
+
+  getPetById = async ({petId, ...query}: GetPetByIdParams, params: RequestParams = {}) => {
+    const response = await this.http.request<GetPetByIdData, any>({
+      path: \`/pets/\${petId}\`,
+      method: 'GET',
+      format: 'json',
+      ...params,
+    });
+
+    getPetByIdDataSchema.parse(response.data);
+
+    return response;
+  };
+  /**
+   * No description
+   *
+   * @tags pets
+   * @name UpdatePet
+   * @summary Update a pet
+   * @request PUT:/pets/{petId}
+   * @response \`200\` \`UpdatePetData\` Pet updated
+   * @response \`default\` \`Error\` unexpected error
+   */
+
+  updatePet = async ({petId, ...query}: UpdatePetParams, data: UpdatePetPayload, params: RequestParams = {}) => {
+    updatePetPayloadSchema.parse(data);
+    const response = await this.http.request<UpdatePetData, any>({
+      path: \`/pets/\${petId}\`,
+      method: 'PUT',
+      body: data,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    });
+
+    updatePetDataSchema.parse(response.data);
 
     return response;
   };
@@ -191,15 +554,23 @@ export interface ListPetsParams {
   limit?: number;
 }
 
+export type ListPetsData = PetsResponse;
+
+export type CreatePetData = Pet;
+
 export interface GetPetByIdParams {
   /** The id of the pet to retrieve */
   petId: string;
 }
 
+export type GetPetByIdData = Pet;
+
 export interface UpdatePetParams {
   /** The id of the pet to update */
   petId: string;
 }
+
+export type UpdatePetData = Pet;
 "
 `;
 
