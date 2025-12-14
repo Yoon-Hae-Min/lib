@@ -41,7 +41,6 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-unused-expressions": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
     "no-console": "warn",
 
     "import/order": [
