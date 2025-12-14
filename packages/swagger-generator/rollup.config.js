@@ -12,8 +12,12 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        file: './lib/index.js',
+        file: './lib/index.cjs',
         format: 'cjs',
+      },
+      {
+        file: './lib/index.js',
+        format: 'esm',
       },
     ],
     plugins: [

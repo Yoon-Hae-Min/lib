@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-const yargs = require('yargs');
-const { hideBin } = require('yargs/helpers');
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
-const { runZod } = require('../lib/index');
-const { runSwagger } = require('../lib/index');
+import { runZod, runSwagger } from '../lib/index.js';
 
 async function main() {
   const argv = await yargs(hideBin(process.argv))

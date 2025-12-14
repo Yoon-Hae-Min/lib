@@ -30,7 +30,15 @@
     "access": "public"
   },
   "types": "lib/index.d.ts",
-  "main": "lib/index.js",
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
   "dependencies": {
     "prettier": "^3.4.2",
     "swagger-typescript-api": "^13.2.16",
