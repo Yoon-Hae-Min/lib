@@ -1,6 +1,6 @@
 {
   "name": "@yoonhaemin-lib/view-tracker",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Track visible sections on scroll with React Intersection Observer for navigation highlighting and progress indicators",
   "keywords": [],
   "repository": {

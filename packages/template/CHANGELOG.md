@@ -1,5 +1,11 @@
 # @yoonhaemin-lib/template
 
+## 0.0.5
+
+### Patch Changes
+
+- 0653546: chore(packages): 패키지 메타데이터 개선 및 일관성 정리
+
 ## 0.0.4
 
 ### Patch Changes
