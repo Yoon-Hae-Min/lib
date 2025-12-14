@@ -21,9 +21,9 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "tsc": "tsc  --showConfig",
+    "tsc": "tsc --noEmit",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
-    "build": "tsc",
+    "build": "tsc && rollup --config && rm -rf ./types",
     "build:prod": "pnpm lint && pnpm test && pnpm build"
   },
   "publishConfig": {
@@ -68,8 +68,5 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-dts": "^6.1.1",
     "typescript": "^5"
-  },
-  "peerDependencies": {
-    "ts-to-zod": ">=3"
   }
 }
