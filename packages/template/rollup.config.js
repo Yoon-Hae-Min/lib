@@ -1,13 +1,13 @@
-const babel = require("@rollup/plugin-babel");
-const commonjs = require("@rollup/plugin-commonjs");
-const { nodeResolve } = require("@rollup/plugin-node-resolve");
-const terser = require("@rollup/plugin-terser");
-const analyze = require("rollup-plugin-analyzer");
-const dts = require("rollup-plugin-dts").default;
+import babel from "@rollup/plugin-babel";
+import commonjs from "@rollup/plugin-commonjs";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
+import analyze from "rollup-plugin-analyzer";
+import dts from "rollup-plugin-dts";
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
-module.exports = [
+export default [
   {
     input: "src/index.ts",
     output: [
@@ -30,7 +30,7 @@ module.exports = [
     external: ["react", "react-dom"],
   },
   {
-    input: "types/index.d.ts",
+    input: "src/index.ts",
     output: {
       file: "./dist/index.d.ts",
       format: "es",

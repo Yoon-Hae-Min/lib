@@ -23,7 +23,7 @@
     "lint": "eslint .",
     "tsc": "tsc --noEmit",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
-    "build": "tsc && rollup --config && rm -rf ./types",
+    "build": "rollup --config",
     "build:prod": "pnpm lint && pnpm test && pnpm build"
   },
   "publishConfig": {

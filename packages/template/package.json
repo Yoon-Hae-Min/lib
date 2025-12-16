@@ -18,7 +18,7 @@
     "lint": "eslint . --max-warnings 0",
     "tsc": "tsc",
     "test": "jest",
-    "build": "tsc && rollup --config && rm -rf ./types",
+    "build": "rollup --config",
     "build:prod": "pnpm lint && pnpm test && pnpm build"
   },
   "publishConfig": {
