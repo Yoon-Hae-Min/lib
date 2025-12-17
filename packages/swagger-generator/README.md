@@ -26,10 +26,10 @@ pnpm add @yoonhaemin-lib/swagger-generator
 
 ### Peer Dependencies
 
-생성된 코드를 사용하려면 다음 패키지가 필요합니다:
+`@yoonhaemin-lib/swagger-generator`는 API 클라이언트 코드를 생성하는 CLI 도구입니다. 생성된 코드가 다음 패키지들을 사용하므로, **코드를 사용할 프로젝트에** 이 패키지들이 설치되어 있어야 합니다:
 
 ```bash
-npm install axios zod ts-to-zod
+npm install axios zod
 ```
 
 ## Quick Start
