@@ -1,8 +1,0 @@
-{
-  "extends": "@yoonhaemin-lib/typescript-config/react-library.json",
-  "compilerOptions": {
-    "outDir": "lib"
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
-}
